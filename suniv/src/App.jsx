@@ -48,7 +48,11 @@ function App() {
           <span className="brand">SUNIV</span>
         </div>
         <div className="header-actions">
-          <form className="search-form" role="search">
+          <form
+            className="search-form"
+            role="search"
+            onSubmit={(event) => event.preventDefault()}
+          >
             <input
               className="search-input"
               type="search"
