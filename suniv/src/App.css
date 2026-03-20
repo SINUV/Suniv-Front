@@ -11,12 +11,14 @@
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 1.5rem;
-  padding: 0 2.5rem;
-  height: 72px;
+  gap: 2rem;
+  padding: 0 3rem;
+  height: 82px;
   background: #ffffff;
-  border-bottom: 1px solid #f0ece8;
-  box-shadow: 0 2px 16px -12px rgba(0, 0, 0, 0.18);
+  border-bottom: 1px solid #e8e8e8;
+  box-shadow: 0 8px 30px -26px rgba(0, 0, 0, 0.2);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
 }
 
 .brand-wrap {
@@ -35,10 +37,10 @@
 }
 
 .brand {
-  font-size: clamp(1.1rem, 1.7vw, 1.45rem);
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  color: #2b2b2b;
+  font-size: clamp(1.25rem, 1.8vw, 1.6rem);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: #111111;
   white-space: nowrap;
 }
 
@@ -47,39 +49,39 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.25rem;
+  gap: 0.35rem;
 }
 
 .nav-link {
   text-decoration: none;
-  font-size: 0.97rem;
+  font-size: 0.95rem;
   font-weight: 500;
-  color: #2b2b2b;
-  padding: 0.4rem 0.85rem;
-  border-radius: 8px;
+  color: #2f2f2f;
+  padding: 0.52rem 0.95rem;
+  border-radius: 999px;
   transition: color 0.18s ease, background-color 0.18s ease;
   white-space: nowrap;
 }
 
 .nav-link:hover {
-  color: #e63930;
-  background-color: #fff0ee;
+  color: #111111;
+  background-color: #f5f5f7;
 }
 
 .nav-link--highlight {
-  color: #e63930;
+  color: #111111;
   font-weight: 600;
 }
 
 .nav-link--highlight:hover {
-  background-color: #ffeae7;
+  background-color: #ececef;
 }
 
 /* ─── Header right side ───────────────────────────────── */
 .header-end {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.9rem;
   flex-shrink: 0;
 }
 
@@ -88,21 +90,21 @@
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  font-size: 0.96rem;
-  font-weight: 700;
+  font-size: 0.93rem;
+  font-weight: 600;
   color: #ffffff;
-  background: #e63930;
-  padding: 0.58rem 1.35rem;
-  border-radius: 10px;
+  background: #1c1c1e;
+  padding: 0.64rem 1.2rem;
+  border-radius: 999px;
   white-space: nowrap;
   transition: background-color 0.2s ease, transform 0.18s ease, box-shadow 0.2s ease;
-  box-shadow: 0 6px 20px -10px rgba(230, 57, 48, 0.55);
+  box-shadow: 0 10px 20px -14px rgba(0, 0, 0, 0.65);
 }
 
 .cta-register:hover {
-  background: #c44536;
+  background: #000000;
   transform: translateY(-1px);
-  box-shadow: 0 10px 24px -12px rgba(196, 69, 54, 0.58);
+  box-shadow: 0 14px 24px -18px rgba(0, 0, 0, 0.78);
 }
 
 /* ─── Hamburger ───────────────────────────────────────── */
@@ -113,9 +115,9 @@
   align-items: center;
   width: 44px;
   height: 44px;
-  border-radius: 10px;
+  border-radius: 999px;
   background: transparent;
-  border: 1.5px solid #e5e0db;
+  border: 1px solid #d9d9de;
   cursor: pointer;
   gap: 5px;
   padding: 0;
@@ -123,7 +125,7 @@
 }
 
 .hamburger-menu:hover {
-  background: #fff0ee;
+  background: #f5f5f7;
 }
 
 .hamburger-menu span {
@@ -131,7 +133,7 @@
   width: 20px;
   height: 2px;
   border-radius: 999px;
-  background: #2b2b2b;
+  background: #1c1c1e;
   transition: transform 0.22s ease, opacity 0.22s ease;
 }
 
@@ -151,35 +153,37 @@
 /* ─── Mobile nav panel ────────────────────────────────── */
 .mobile-nav {
   position: sticky;
-  top: 72px;
+  top: 82px;
   z-index: 49;
   display: flex;
   flex-direction: column;
   background: #ffffff;
-  border-bottom: 1px solid #f0ece8;
-  padding: 0.75rem 1.5rem 1.25rem;
+  border-bottom: 1px solid #e8e8e8;
+  padding: 0.95rem 1.5rem 1.35rem;
   gap: 0.25rem;
-  box-shadow: 0 8px 24px -16px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 16px 28px -22px rgba(0, 0, 0, 0.26);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
 }
 
 .mobile-nav-link {
   text-decoration: none;
-  font-size: 1.06rem;
+  font-size: 1rem;
   font-weight: 500;
-  color: #2b2b2b;
-  padding: 0.75rem 0.65rem;
-  border-radius: 8px;
+  color: #2f2f2f;
+  padding: 0.8rem 0.72rem;
+  border-radius: 12px;
   transition: color 0.15s ease, background-color 0.15s ease;
 }
 
 .mobile-nav-link:hover {
-  color: #e63930;
-  background: #fff0ee;
+  color: #111111;
+  background: #f5f5f7;
 }
 
 .mobile-nav-link--highlight {
-  color: #e63930;
-  font-weight: 700;
+  color: #111111;
+  font-weight: 600;
 }
 
 .cta-register--mobile {
@@ -206,7 +210,7 @@
 
 .home-main {
   flex: 1;
-  width: min(1180px, calc(100% - 2rem));
+  width: min(1280px, calc(100% - 2rem));
   margin: 0 auto;
   padding: 2rem 0 3rem;
 }
@@ -283,6 +287,7 @@
 
 .slider-section {
   margin-top: 1rem;
+  width: 100%;
 }
 
 .slider-shell {
@@ -302,7 +307,7 @@
 .slide {
   min-width: 100%;
   position: relative;
-  aspect-ratio: 16 / 7;
+  aspect-ratio: 21 / 8;
   overflow: hidden;
 }
 
@@ -473,6 +478,7 @@
   .home-header {
     padding: 0 1.25rem;
     grid-template-columns: auto auto;
+    height: 76px;
   }
 
   .main-nav {
@@ -484,7 +490,7 @@
   }
 
   .slide {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 16 / 9;
   }
 }
 
@@ -518,6 +524,10 @@
 
   .slider-shell {
     border-radius: 22px;
+  }
+
+  .slide {
+    aspect-ratio: 16 / 10;
   }
 
   .slider-arrow {
@@ -1033,8 +1043,8 @@
 
 /* ─── nav-link activo ─────────────────────────────────── */
 .nav-link--active {
-  background-color: #fff0ee;
-  color: #e63930 !important;
+  background-color: #f1f1f3;
+  color: #111111 !important;
 }
 
 /* ─── Responsive páginas internas ────────────────────── */
