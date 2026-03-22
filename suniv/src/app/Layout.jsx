@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
-import logo from '../assets/images/logo.png'
+import logo from '../assets/images/logo1.jpg'
 import '../App.css'
 
 export default function Layout() {
@@ -12,12 +12,10 @@ export default function Layout() {
     <div className="home-page">
       {/* ── Header ── */}
       <header className="home-header">
-        <Link to="/" className="brand-wrap" aria-label="Ir al inicio de NovaUniversitas">
-          <img className="brand-logo" src={logo} alt="Logo de NovaUniversitas" />
-          <span className="brand">NovaUniversitas</span>
-        </Link>
-
         <nav className="main-nav" aria-label="Navegación principal">
+          <Link to="/" className="nav-logo" aria-label="Ir al inicio de NovaUniversitas">
+            <img className="brand-logo" src={logo} alt="Logo de NovaUniversitas" />
+          </Link>
           <NavLink
             to="/"
             end
@@ -28,14 +26,14 @@ export default function Layout() {
             Inicio
           </NavLink>
           <NavLink
-            to="/admisiones"
+            to="/aspirantes"
             className={({ isActive }) =>
               isActive
                 ? 'nav-link nav-link--highlight nav-link--active'
                 : 'nav-link nav-link--highlight'
             }
           >
-            Admisiones
+            Aspirantes
           </NavLink>
           <NavLink
             to="/programas"
@@ -64,8 +62,8 @@ export default function Layout() {
         </nav>
 
         <div className="header-end">
-          <Link to="/registro" className="cta-register">
-            Registrarse
+          <Link to="/" className="mobile-brand" aria-label="Inicio">
+            <img className="brand-logo" src={logo} alt="Logo de NovaUniversitas" />
           </Link>
           <button
             className={`hamburger-menu${mobileMenuOpen ? ' is-open' : ''}`}
@@ -88,10 +86,10 @@ export default function Layout() {
           </NavLink>
           <NavLink
             className="mobile-nav-link mobile-nav-link--highlight"
-            to="/admisiones"
+            to="/aspirantes"
             onClick={closeMenu}
           >
-            Admisiones
+            Aspirantes
           </NavLink>
           <NavLink className="mobile-nav-link" to="/programas" onClick={closeMenu}>
             Programas
@@ -102,13 +100,6 @@ export default function Layout() {
           <NavLink className="mobile-nav-link" to="/contacto" onClick={closeMenu}>
             Contacto
           </NavLink>
-          <Link
-            to="/registro"
-            className="cta-register cta-register--mobile"
-            onClick={closeMenu}
-          >
-            Registrarse
-          </Link>
         </nav>
       )}
 

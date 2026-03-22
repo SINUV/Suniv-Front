@@ -32,13 +32,13 @@ const REQUISITOS = [
   'Acta de nacimiento (original y copia)',
 ]
 
-export default function AdmisionesPage() {
+export default function AspirantesPage() {
   return (
     <main className="page-main">
       {/* ── Hero ── */}
-      <section className="page-hero page-hero--admisiones">
+      <section className="page-hero page-hero--aspirantes">
         <div className="page-hero__copy">
-          <p className="eyebrow">Proceso de admisión</p>
+          <p className="eyebrow">Proceso para aspirantes</p>
           <h1 className="page-hero__title">
             Tu camino a <span className="hero-highlight">NovaUniversitas</span> empieza aquí
           </h1>
@@ -92,7 +92,7 @@ export default function AdmisionesPage() {
       <section className="content-section cta-band">
         <h2 className="cta-band__title">¿Listo para comenzar?</h2>
         <p className="cta-band__sub">
-          Regístrate ahora y asegura tu lugar en el próximo ciclo escolar.
+          Inicia tu proceso de aspirantes y asegura tu lugar en el próximo ciclo escolar.
         </p>
         <div className="hero-actions" style={{ justifyContent: 'center' }}>
           <Link to="/registro" className="primary-button">

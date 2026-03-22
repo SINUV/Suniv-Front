@@ -87,8 +87,8 @@ export default function SobreNosotrosPage() {
           Da el primer paso hacia tu futuro profesional con nosotros.
         </p>
         <div className="hero-actions" style={{ justifyContent: 'center' }}>
-          <Link to="/admisiones" className="primary-button">
-            Iniciar admisión
+          <Link to="/aspirantes" className="primary-button">
+            Iniciar proceso de aspirantes
           </Link>
           <Link to="/programas" className="secondary-button">
             Ver programas

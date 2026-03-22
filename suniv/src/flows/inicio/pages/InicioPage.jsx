@@ -3,25 +3,29 @@ import { Link } from 'react-router-dom'
 import bannerOne from '../../../assets/images/BannerNovaCentral_1.jpg'
 import bannerTwo from '../../../assets/images/BannerNovaCentral_2.jpg'
 import bannerThree from '../../../assets/images/BannerNovaCentral_3.jpg'
+import campusImage from '../../../assets/images/img1.jpg'
+import isaImage from '../../../assets/images/ISA.jpg'
+import ldsImage from '../../../assets/images/LDS.jpg'
+import ledmImage from '../../../assets/images/LEDM.jpg'
 
 export default function InicioPage() {
   const slides = useMemo(
     () => [
       {
         image: bannerOne,
-        title: 'Aprender hoy abre puertas para toda la vida',
+        title: 'Campus Periférico San Jacinto',
         description:
           'Cada clase, cada lectura y cada reto te acerca a la mejor versión de tu futuro.',
       },
       {
         image: bannerTwo,
-        title: 'Tu esfuerzo diario construye metas reales',
+        title: 'Campus Periférico Santos Reyes Nopala',
         description:
           'Convierte la constancia en tu mayor fortaleza y avanza con propósito en cada semestre.',
       },
       {
         image: bannerThree,
-        title: 'Estudiar es sembrar oportunidades',
+        title: 'Campus Periférico Juxtlahuaca',
         description:
           'Sigue creciendo con disciplina, curiosidad y confianza en todo lo que puedes lograr.',
       },
@@ -29,13 +33,43 @@ export default function InicioPage() {
     [],
   )
 
-  const [currentSlide, setCurrentSlide] = useState(0)
+  const loopSlides = useMemo(
+    () => [slides[slides.length - 1], ...slides, slides[0]],
+    [slides],
+  )
 
-  const goToPrevious = () =>
-    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1))
+  const [displaySlide, setDisplaySlide] = useState(1)
+  const [trackTransitionEnabled, setTrackTransitionEnabled] = useState(true)
 
-  const goToNext = () =>
-    setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1))
+  const currentSlide =
+    displaySlide === 0
+      ? slides.length - 1
+      : displaySlide === slides.length + 1
+        ? 0
+        : displaySlide - 1
+
+  const goToPrevious = () => setDisplaySlide((prev) => prev - 1)
+
+  const goToNext = () => setDisplaySlide((prev) => prev + 1)
+
+  const handleTrackTransitionEnd = () => {
+    if (displaySlide === slides.length + 1) {
+      setTrackTransitionEnabled(false)
+      setDisplaySlide(1)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setTrackTransitionEnabled(true))
+      })
+      return
+    }
+
+    if (displaySlide === 0) {
+      setTrackTransitionEnabled(false)
+      setDisplaySlide(slides.length)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setTrackTransitionEnabled(true))
+      })
+    }
+  }
 
   return (
     <main className="home-main">
@@ -51,11 +85,8 @@ export default function InicioPage() {
             llegar más lejos en cada etapa de tu formación.
           </p>
           <div className="hero-actions">
-            <Link to="/admisiones" className="primary-button">
+            <Link to="/aspirantes" className="primary-button">
               Comenzar
-            </Link>
-            <Link to="/programas" className="secondary-button">
-              Explorar oportunidades
             </Link>
           </div>
         </div>
@@ -86,10 +117,19 @@ export default function InicioPage() {
 
             <div
               className="slider-track"
-              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+              style={{
+                transform: `translateX(-${displaySlide * 100}%)`,
+                transition: trackTransitionEnabled
+                  ? 'transform 0.62s cubic-bezier(0.22, 0.61, 0.36, 1)'
+                  : 'none',
+              }}
+              onTransitionEnd={handleTrackTransitionEnd}
             >
-              {slides.map((slide) => (
-                <article className="slide" key={slide.title}>
+              {loopSlides.map((slide, index) => (
+                <article
+                  className={`slide${index === displaySlide ? ' is-active' : ''}`}
+                  key={`${slide.title}-${index}`}
+                >
                   <img className="slide-image" src={slide.image} alt={slide.title} />
                   <div className="slide-overlay">
                     <div className="slide-caption">
@@ -125,13 +165,159 @@ export default function InicioPage() {
                   key={slide.title}
                   type="button"
                   className={`slider-dot${index === currentSlide ? ' is-active' : ''}`}
-                  onClick={() => setCurrentSlide(index)}
+                  onClick={() => setDisplaySlide(index + 1)}
                   aria-label={`Ir a la imagen ${index + 1}`}
                 />
               ))}
             </div>
           </div>
         </section>
+      </section>
+
+      <section className="home-floating" aria-label="Información destacada de campus">
+        <article className="home-floating__card">
+          <div className="home-floating__copy">
+            <h2 className="home-floating__title">
+              Formacion cercana,{' '}
+              <span className="home-floating__title-accent">impacto real</span>
+            </h2>
+            <p className="home-floating__text">
+              NovaUniversitas, parte del Sistema de Universidades Estatales de Oaxaca,
+              esta diseñada para grupos reducidos, donde cada estudiante recibe atencion
+              directa y seguimiento constante.
+            </p>
+            <p className="home-floating__text">
+              Un modelo enfocado en aprender haciendo, desarrollar criterio y prepararte
+              para el mundo real en Oaxaca.
+            </p>
+          </div>
+
+          <div className="home-floating__media">
+            <img src={campusImage} alt="Vista destacada del campus" />
+          </div>
+        </article>
+      </section>
+
+      <section className="home-model-intro" aria-label="Introducción al Modelo Educativo">
+        <p className="home-model-intro__eyebrow">Modelo Educativo</p>
+      </section>
+
+      <section className="home-model" aria-label="Modelo Educativo de NovaUniversitas">
+        <div className="home-model__header">
+          <h2 className="home-model__title">
+            Educacion telepresencial con{' '}
+            <span className="home-model__accent">acompanamiento real</span>
+          </h2>
+          <p className="home-model__lead">
+            NovaUniversitas combina lo mejor de la universidad a distancia y presencial:
+            clases desde un campus central, con estudiantes en jornada completa en cada
+            sede y seguimiento continuo de su avance.
+          </p>
+          <p className="home-model__lead">
+            Nuestro enfoque garantiza que cada estudiante tenga acceso a educación de
+            calidad independientemente de su ubicación, con docentes especializados,
+            infraestructura tecnológica avanzada y un acompañamiento académico permanente
+            para asegurar el éxito en su formación integral.
+          </p>
+        </div>
+
+        <div className="home-model__grid">
+          <article className="home-model__card">
+            <h3>Ensenanza conectada en tiempo real</h3>
+            <p>
+              La clase se transmite en modalidad telepresencial y, cuando se usa material
+              grabado, la sesion de preguntas y respuestas se realiza{' '}
+              <span className="home-model__accent">en directo para todos los campus</span>.
+            </p>
+          </article>
+
+          <article className="home-model__card">
+            <h3>Aulas listas para aprender haciendo</h3>
+            <p>
+              Cada aula cuenta con computadoras por alumno, pizarrones electronicos y
+              pantallas para seguir explicaciones en vivo, con enfoque practico y
+              desarrollo de criterio.
+            </p>
+          </article>
+
+          <article className="home-model__card">
+            <h3>Soporte academico permanente</h3>
+            <p>
+              Un tecnico academico por aula canaliza preguntas, apoya practicas,
+              supervisa examenes y funge como tutor, bajo el control del profesor titular
+              de la materia.
+            </p>
+          </article>
+
+          <article className="home-model__card">
+            <h3>Formacion integral para transformar</h3>
+            <p>
+              El trabajo academico se complementa con actividad cultural intensa y
+              acciones de vinculacion comunitaria para fortalecer una vision profesional
+              con impacto social.
+            </p>
+          </article>
+        </div>
+
+        <p className="home-model__campus">
+          Campus contemplados de NovaUniversitas: Campus Central Ocotlan, Acatlan de
+          Perez Figueroa, Huautla, Juxtlahuaca, Matias Romero, Nochixtlan, Putla y
+          Sola de Vega.
+        </p>
+      </section>
+
+      <section className="home-programs" aria-label="Carreras Académicas de NovaUniversitas">
+        <div className="home-programs__header">
+          <p className="home-programs__eyebrow">Nuestras Carreras</p>
+          <h2 className="home-programs__title">
+            Estudios especializados para{' '}
+            <span className="home-programs__accent">tu futuro</span>
+          </h2>
+        </div>
+
+        <div className="home-programs__grid">
+          <article className="home-programs__card">
+            <div className="home-programs__card-image">
+              <img src={ldsImage} alt="Ingeniería en Desarrollos de Software" />
+            </div>
+            <div className="home-programs__card-content">
+              <h3>Ingeniería en Desarrollos de Software</h3>
+              <p>
+                Forma profesionales capaces de diseñar, desarrollar y gestionar soluciones
+                de software innovadoras, utilizando metodologías ágiles y tecnologías de
+                vanguardia para resolver problemas empresariales complejos.
+              </p>
+            </div>
+          </article>
+
+          <article className="home-programs__card">
+            <div className="home-programs__card-image">
+              <img src={isaImage} alt="Ingeniería en Sistemas Agroalimentarios" />
+            </div>
+            <div className="home-programs__card-content">
+              <h3>Ingeniería en Sistemas Agroalimentarios</h3>
+              <p>
+                Prepara ingenieros para optimizar procesos en la agroindustria y
+                agroalimentaria, integrando tecnología, sostenibilidad y gestión
+                empresarial para el desarrollo rural integral.
+              </p>
+            </div>
+          </article>
+
+          <article className="home-programs__card">
+            <div className="home-programs__card-image">
+              <img src={ledmImage} alt="Licenciatura en Emprendimiento y Desarrollo de MIPyMES" />
+            </div>
+            <div className="home-programs__card-content">
+              <h3>Licenciatura en Emprendimiento y Desarrollo de MIPyMES</h3>
+              <p>
+                Capacita emprendedores y gestores para crear y administrar micro, pequeñas
+                y medianas empresas, promoviendo la innovación, el liderazgo y el impacto
+                socioeconómico en sus comunidades.
+              </p>
+            </div>
+          </article>
+        </div>
       </section>
     </main>
   )

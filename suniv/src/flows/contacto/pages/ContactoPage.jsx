@@ -51,7 +51,7 @@ export default function ContactoPage() {
             <span className="hero-highlight">ayudarte</span>
           </h1>
           <p className="page-hero__subtitle">
-            Resuelve tus dudas sobre admisiones, programas académicos o servicios
+            Resuelve tus dudas sobre aspirantes, programas académicos o servicios
             escolares. Nuestro equipo te responde a la brevedad.
           </p>
         </div>
@@ -143,7 +143,7 @@ export default function ContactoPage() {
                     required
                   >
                     <option value="">Selecciona un asunto</option>
-                    <option value="admisiones">Admisiones</option>
+                    <option value="aspirantes">Aspirantes</option>
                     <option value="programas">Información de programas</option>
                     <option value="servicios">Servicios escolares</option>
                     <option value="otro">Otro</option>

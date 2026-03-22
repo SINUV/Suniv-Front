@@ -89,11 +89,11 @@ export default function ProgramasPage() {
       <section className="content-section cta-band">
         <h2 className="cta-band__title">¿Ya elegiste tu carrera?</h2>
         <p className="cta-band__sub">
-          Inicia tu proceso de admisión hoy mismo y asegura tu futuro profesional.
+          Inicia tu proceso para aspirantes hoy mismo y asegura tu futuro profesional.
         </p>
         <div className="hero-actions" style={{ justifyContent: 'center' }}>
-          <Link to="/admisiones" className="primary-button">
-            Ver admisiones
+          <Link to="/aspirantes" className="primary-button">
+            Ver aspirantes
           </Link>
           <Link to="/contacto" className="secondary-button">
             Solicitar información
