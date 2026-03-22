@@ -20,12 +20,7 @@ body,
 
 body {
   font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(
-    180deg,
-    #fff8f4 0%,
-    #ffe7d7 45%,
-    #ffd3ae 100%
-  );
+  background: #ffffff;
   color: var(--suniv-dark);
 }
 

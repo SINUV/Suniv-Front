@@ -42,7 +42,6 @@ export default function InicioPage() {
       <section className="hero-section">
         {/* ── Copy ── */}
         <div className="hero-copy">
-          <p className="eyebrow">Bienvenido</p>
           <h1 className="motivational-title">
             Estudiar hoy es{' '}
             <span className="hero-highlight">encender</span> el futuro que sueñas.

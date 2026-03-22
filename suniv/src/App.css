@@ -245,7 +245,18 @@
 }
 
 .hero-highlight {
-  color: var(--suniv-primary);
+  background: linear-gradient(
+    110deg,
+    #e63930 0%,
+    #c44536 32%,
+    #f96e41 58%,
+    #ffa057 80%,
+    #ffd6c0 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 .hero-subtitle {
