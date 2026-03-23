@@ -714,6 +714,39 @@
 }
 
 .slide.is-active .slide-caption {
+.aspirantes-api {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.7rem;
+}
+.aspirantes-api__text {
+  margin: 0;
+  max-width: 72ch;
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--suniv-dark) 78%, var(--suniv-white));
+}
+.aspirantes-api__actions {
+  margin-top: 0.6rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+.aspirantes-api__result {
+  margin: 0.3rem 0 0;
+  width: min(880px, 100%);
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  color: color-mix(in srgb, var(--suniv-dark) 88%, var(--suniv-white));
+  font-size: 0.96rem;
+  line-height: 1.6;
+  word-break: break-word;
+}
   opacity: 1;
   transform: translateY(0);
 }
@@ -1142,6 +1175,114 @@
   font-size: 0.98rem;
   color: var(--suniv-dark);
   font-weight: 500;
+}
+
+.aspirantes-form-section {
+  display: grid;
+  gap: 1rem;
+}
+
+.aspirantes-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.aspirantes-form__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.9rem;
+}
+
+.aspirantes-form label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--suniv-dark) 82%, var(--suniv-white));
+}
+
+.aspirantes-form input,
+.aspirantes-form select,
+.folio-input {
+  width: 100%;
+  border: 1px solid rgba(17, 17, 17, 0.16);
+  background: rgba(255, 255, 255, 0.78);
+  border-radius: 10px;
+  padding: 0.72rem 0.8rem;
+  font-size: 0.96rem;
+  color: var(--suniv-dark);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.aspirantes-form input:focus,
+.aspirantes-form select:focus,
+.folio-input:focus {
+  border-color: var(--suniv-primary);
+  box-shadow: 0 0 0 3px rgba(230, 57, 48, 0.12);
+}
+
+.aspirantes-form__checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 500;
+}
+
+.aspirantes-form__checkbox input {
+  width: auto;
+}
+
+.form-error {
+  color: #b71d16;
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.form-summary-error {
+  margin: 0;
+  border: 1px solid rgba(183, 29, 22, 0.25);
+  background: rgba(183, 29, 22, 0.08);
+  color: #8b120d;
+  border-radius: 12px;
+  padding: 0.75rem 0.9rem;
+  font-weight: 600;
+}
+
+.folio-success {
+  border-radius: 16px;
+  border: 1px solid rgba(12, 122, 74, 0.22);
+  background: rgba(19, 173, 104, 0.08);
+  padding: 1rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.folio-success__label {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #0d6a42;
+  font-weight: 800;
+}
+
+.folio-success__folio {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.8vw, 1.9rem);
+  font-weight: 900;
+  color: #064c2f;
+  line-height: 1.1;
+}
+
+.folio-success__meta {
+  margin: 0;
+  font-size: 0.92rem;
+  color: color-mix(in srgb, #064c2f 72%, white);
+}
+
+.aspirantes-api__actions--inline {
+  align-items: center;
 }
 
 /* ─── Programas: grid de áreas ────────────────────────── */
