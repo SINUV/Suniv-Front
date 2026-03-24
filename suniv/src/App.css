@@ -1379,6 +1379,44 @@
   color: #3b82f6;
 }
 
+.wz-simple-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.wz-simple-summary__block {
+  padding: 1rem 1.1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  background: rgba(255, 255, 255, 0.92);
+  display: grid;
+  gap: 0.7rem;
+}
+
+.wz-simple-summary__label {
+  margin: 0;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--suniv-primary);
+}
+
+.wz-simple-summary__list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.45rem;
+  color: #374151;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.wz-simple-summary__list li::marker {
+  color: var(--suniv-primary);
+}
+
 /* ── Checkbox personalizado ── */
 .wz-checkbox {
   display: flex;

@@ -9,13 +9,43 @@ import {
 
 const DRAFT_KEY = 'suniv_aspirante_draft_v1'
 
+const CAMPUS_OPTIONS = [
+  { id: '6283ba78-af47-4291-ab87-4325310e866f', nombre: 'San Jacinto' },
+  { id: 'bb10faf1-f21e-46bd-ba41-10c0e18bfc37', nombre: 'Juxtlahuaca' },
+  { id: '72580bdf-db9c-48ae-a7c1-586d3d3fd8b8', nombre: 'Nopala' },
+]
+
+const PROGRAM_OPTIONS = [
+  // Campus San Jacinto
+  { id: 'b30269e1-326c-4958-839a-d9d85003dc9e', nombre: 'Ingeniería en Desarrollo de Software', campusId: '6283ba78-af47-4291-ab87-4325310e866f' },
+  { id: '74e3fab2-09d0-41b7-9d28-df51db13e2ff', nombre: 'Ingeniería en Sistemas Agroalimentarios', campusId: '6283ba78-af47-4291-ab87-4325310e866f' },
+  { id: '7849c604-b532-4a93-8ef7-08fcfbefaf63', nombre: 'Licenciatura en Emprendimiento y Desarrollo de MyPyMES', campusId: '6283ba78-af47-4291-ab87-4325310e866f' },
+  
+  // Campus Juxtlahuaca
+  { id: '3b07059b-d73f-4a33-9bdd-21a175efbfa9', nombre: 'Ingeniería en Desarrollo de Software', campusId: 'bb10faf1-f21e-46bd-ba41-10c0e18bfc37' },
+  { id: '555351d5-c47a-4dcd-a65b-6f6bc213e290', nombre: 'Ingeniería en Sistemas Agroalimentarios', campusId: 'bb10faf1-f21e-46bd-ba41-10c0e18bfc37' },
+  { id: '05acab48-0809-4b35-8a91-b1b56cedfb15', nombre: 'Licenciatura en Emprendimiento y Desarrollo de MyPyMES', campusId: 'bb10faf1-f21e-46bd-ba41-10c0e18bfc37' },
+  
+  // Campus Nopala
+  { id: '40d55454-898f-4052-ba81-301691828b92', nombre: 'Ingeniería en Desarrollo de Software', campusId: '72580bdf-db9c-48ae-a7c1-586d3d3fd8b8' },
+  { id: 'dabd65df-cd32-47f0-8d56-e196b418ba38', nombre: 'Ingeniería en Sistemas Agroalimentarios', campusId: '72580bdf-db9c-48ae-a7c1-586d3d3fd8b8' },
+  { id: 'de497e2a-1010-4123-adce-5f6899eefcea', nombre: 'Licenciatura en Emprendimiento y Desarrollo de MyPyMES', campusId: '72580bdf-db9c-48ae-a7c1-586d3d3fd8b8' },
+]
+
+const GUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const PHONE_REGEX = /^\d{10}$/
+const POSTAL_CODE_REGEX = /^\d{5}$/
+const CURP_REGEX = /^[A-Z]{4}\d{6}[HM][A-Z]{5}[A-Z0-9]\d$/
+
 const STEPS = [
   {
     id: 'programa',
     num: 1,
-    titulo: 'Programa',
-    subtitulo: '¿Qué quieres estudiar?',
-    descripcion: 'Elige el campus y la carrera a la que deseas inscribirte en NovaUniversitas.',
+    titulo: 'Sede y programa',
+    subtitulo: '¿Dónde y qué quieres estudiar?',
+    descripcion:
+      'Selecciona la sede y la carrera con las que deseas iniciar tu proceso en NovaUniversitas.',
     requiredFields: ['campusId', 'carreraId'],
   },
   {
@@ -24,7 +54,14 @@ const STEPS = [
     titulo: 'Datos personales',
     subtitulo: '¿Quién eres?',
     descripcion: 'Ingresa tus datos tal y como aparecen en tu documento de identificación oficial.',
-    requiredFields: ['nombre', 'apellidoPaterno', 'apellidoMaterno', 'fechaNacimiento', 'curp'],
+    requiredFields: [
+      'nombre',
+      'apellidoPaterno',
+      'apellidoMaterno',
+      'fechaNacimiento',
+      'estadoCivil',
+      'curp',
+    ],
   },
   {
     id: 'contacto',
@@ -56,7 +93,18 @@ const STEPS = [
     titulo: 'Responsable',
     subtitulo: 'Contacto de emergencia y envío final',
     descripcion: 'Persona a quien contactaremos ante cualquier situación importante de tu proceso.',
-    requiredFields: ['nombreResponsable', 'parentesco', 'telefonoResponsable', 'lugarAplicacion', 'consentimiento'],
+    requiredFields: [
+      'nombreResponsable',
+      'parentesco',
+      'telefonoResponsable',
+      'calleResponsable',
+      'coloniaResponsable',
+      'municipioResponsable',
+      'estadoResponsable',
+      'codigoPostalResponsable',
+      'lugarAplicacion',
+      'consentimiento',
+    ],
   },
 ]
 
@@ -90,6 +138,7 @@ function buildInitialForm() {
     lenguaIndigena: '',
     grupoEtnico: '',
     esAfrodesc: false,
+    esIndigena: false,
     descendencia: '',
     tipoSangre: 'O+',
     enfermedades: '',
@@ -101,28 +150,70 @@ function buildInitialForm() {
     parentesco: '',
     ocupacionResponsable: '',
     telefonoResponsable: '',
+    calleResponsable: '',
+    coloniaResponsable: '',
+    municipioResponsable: '',
+    estadoResponsable: '',
+    codigoPostalResponsable: '',
     lugarAplicacion: '',
     consentimiento: false,
   }
 }
 
+function trimPayloadStrings(payload) {
+  const normalized = { ...payload }
+  Object.keys(normalized).forEach((key) => {
+    if (typeof normalized[key] === 'string') {
+      normalized[key] = normalized[key].trim()
+    }
+  })
+  return normalized
+}
+
+function sanitizeDraft(rawDraft, initialState) {
+  const safeDraft = {}
+
+  Object.keys(initialState).forEach((key) => {
+    const initialValue = initialState[key]
+    const draftValue = rawDraft?.[key]
+
+    if (draftValue === undefined || draftValue === null) {
+      safeDraft[key] = initialValue
+      return
+    }
+
+    if (typeof initialValue === 'boolean') {
+      safeDraft[key] = Boolean(draftValue)
+      return
+    }
+
+    safeDraft[key] = String(draftValue)
+  })
+
+  return safeDraft
+}
+
 function normalizePayload(formData) {
+  const trimmed = trimPayloadStrings(formData)
+
   return {
-    ...formData,
-    anioIngreso: Number(formData.anioIngreso),
-    anioEgreso: Number(formData.anioEgreso),
-    promedioFinal: Number(formData.promedioFinal),
+    ...trimmed,
+    curp: trimmed.curp.toUpperCase(),
+    anioIngreso: Number(trimmed.anioIngreso),
+    anioEgreso: Number(trimmed.anioEgreso),
+    promedioFinal: Number(trimmed.promedioFinal),
   }
 }
 
 function validateStep(formData, stepId) {
   const errors = {}
   const step = STEPS.find((s) => s.id === stepId)
-  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   const currentYear = new Date().getFullYear()
+  const today = new Date()
+  const normalized = trimPayloadStrings(formData)
 
   for (const field of step.requiredFields) {
-    const value = formData[field]
+    const value = normalized[field]
     if (field === 'consentimiento') {
       if (!value) errors[field] = 'Debes aceptar el consentimiento para enviar tu solicitud.'
     } else if (typeof value === 'string' && !value.trim()) {
@@ -130,28 +221,68 @@ function validateStep(formData, stepId) {
     }
   }
 
-  if (stepId === 'personal') {
-    if (formData.curp && formData.curp.trim().length < 10) {
-      errors.curp = 'La CURP debe tener al menos 10 caracteres.'
+  if (stepId === 'programa') {
+    if (normalized.campusId && !GUID_REGEX.test(normalized.campusId)) {
+      errors.campusId = 'Campus inválido. Selecciona una opción de la lista.'
+    }
+    if (normalized.carreraId && !GUID_REGEX.test(normalized.carreraId)) {
+      errors.carreraId = 'Carrera inválida. Selecciona una opción de la lista.'
     }
   }
+
+  if (stepId === 'personal') {
+    if (normalized.curp && !CURP_REGEX.test(normalized.curp.toUpperCase())) {
+      errors.curp = 'La CURP debe tener 18 caracteres válidos en formato oficial.'
+    }
+    if (normalized.fechaNacimiento) {
+      const birthDate = new Date(`${normalized.fechaNacimiento}T00:00:00`)
+      if (Number.isNaN(birthDate.getTime())) {
+        errors.fechaNacimiento = 'Fecha de nacimiento inválida.'
+      } else if (birthDate > today) {
+        errors.fechaNacimiento = 'La fecha de nacimiento no puede ser futura.'
+      }
+    }
+  }
+
   if (stepId === 'contacto') {
-    if (formData.correo && !EMAIL_REGEX.test(formData.correo)) {
+    if (normalized.correo && !EMAIL_REGEX.test(normalized.correo)) {
       errors.correo = 'Ingresa un correo electrónico válido (ej. tu@correo.com).'
     }
+    if (normalized.telefono && !PHONE_REGEX.test(normalized.telefono)) {
+      errors.telefono = 'El teléfono debe tener 10 dígitos numéricos.'
+    }
+    if (normalized.codigoPostal && !POSTAL_CODE_REGEX.test(normalized.codigoPostal)) {
+      errors.codigoPostal = 'El código postal debe tener 5 dígitos.'
+    }
   }
+
   if (stepId === 'escolar') {
-    const ing = Number(formData.anioIngreso)
-    const egr = Number(formData.anioEgreso)
-    const prom = Number(formData.promedioFinal)
-    if (formData.anioIngreso && (ing < 1900 || ing > currentYear)) {
+    const ing = Number(normalized.anioIngreso)
+    const egr = Number(normalized.anioEgreso)
+    const prom = Number(normalized.promedioFinal)
+    if (normalized.anioIngreso && (!Number.isInteger(ing) || ing < 1900 || ing > currentYear)) {
       errors.anioIngreso = `Ingresa un año entre 1900 y ${currentYear}.`
     }
-    if (formData.anioEgreso && (egr < 1900 || egr > currentYear)) {
+    if (normalized.anioEgreso && (!Number.isInteger(egr) || egr < 1900 || egr > currentYear)) {
       errors.anioEgreso = `Ingresa un año entre 1900 y ${currentYear}.`
     }
-    if (formData.promedioFinal && (isNaN(prom) || prom < 0 || prom > 10)) {
+    if (normalized.anioIngreso && normalized.anioEgreso && egr < ing) {
+      errors.anioEgreso = 'El año de egreso debe ser mayor o igual al de ingreso.'
+    }
+    if (normalized.promedioFinal && (isNaN(prom) || prom < 0 || prom > 10)) {
       errors.promedioFinal = 'El promedio debe estar entre 0 y 10.'
+    }
+  }
+
+  if (stepId === 'responsable') {
+    if (normalized.telefonoResponsable && !PHONE_REGEX.test(normalized.telefonoResponsable)) {
+      errors.telefonoResponsable = 'El teléfono del responsable debe tener 10 dígitos.'
+    }
+    if (
+      normalized.codigoPostalResponsable &&
+      !POSTAL_CODE_REGEX.test(normalized.codigoPostalResponsable)
+    ) {
+      errors.codigoPostalResponsable = 'El código postal del responsable debe tener 5 dígitos.'
     }
   }
 
@@ -210,7 +341,7 @@ export default function AspirantesPage() {
       const raw = localStorage.getItem(DRAFT_KEY)
       if (!raw) return
       const parsed = JSON.parse(raw)
-      setFormData((prev) => ({ ...prev, ...parsed }))
+      setFormData((prev) => sanitizeDraft(parsed, prev))
     } catch {
       localStorage.removeItem(DRAFT_KEY)
     }
@@ -255,6 +386,7 @@ export default function AspirantesPage() {
   const handleSubmit = async (event) => {
     event.preventDefault()
     setSubmitError('')
+    setFieldErrors({})
     const stepId = STEPS[currentStep].id
     const validation = validateStep(formData, stepId)
     if (!validation.isValid) {
@@ -287,8 +419,28 @@ export default function AspirantesPage() {
         }
       }
     } catch (error) {
-      if (error.type === 'HTTP_ERROR' && error.status >= 500) {
-        setSubmitError(`Error del servidor (${error.status}). Verifica la configuración de Supabase:Url.`)
+      if (error.type === 'VALIDATION_ERROR') {
+        setFieldErrors(error.fieldErrors || {})
+        setSubmitError(
+          'Faltan o son inválidos algunos campos obligatorios. Revisa los mensajes marcados.',
+        )
+      } else if (error.type === 'HTTP_ERROR' && error.status >= 500) {
+        const backendMessage = String(error?.message || '')
+
+        if (backendMessage.toLowerCase().includes('cloud name must be specified')) {
+          setSubmitError(
+            `Error del servidor (${error.status}): falta configurar Cloudinary (Cloud name). ` +
+              'Solicita al backend revisar la configuración de almacenamiento de imágenes.',
+          )
+        } else if (backendMessage.toLowerCase().includes('supabase')) {
+          setSubmitError(
+            `Error del servidor (${error.status}): revisa configuración de Supabase en backend.`,
+          )
+        } else {
+          setSubmitError(
+            `Error del servidor (${error.status}): ${backendMessage || 'Error interno no detallado.'}`,
+          )
+        }
       } else {
         setSubmitError(`Error al enviar: ${error.message}`)
       }
@@ -464,13 +616,58 @@ export default function AspirantesPage() {
                         <circle cx="9" cy="9" r="8" stroke="currentColor" strokeWidth="1.5" />
                         <path d="M9 8v5M9 5.5v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                       </svg>
-                      Consulta con el equipo de admisiones los identificadores UUID de campus y carrera.
+                      Selecciona el campus y la carrera. Esto evita errores de captura y asegura que
+                      solo elijas opciones válidas del formulario.
                     </div>
-                    <Field label="Campus ID" name="campusId" required hint="UUID del campus · Ej. 3fa85f64-5717-4562-b3fc-2c963f66afa6" error={e('campusId')}>
-                      <input id="campusId" name="campusId" value={formData.campusId} onChange={handleChange} placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+                    <div className="wz-grid__full wz-simple-summary">
+                      <div className="wz-simple-summary__block">
+                        <p className="wz-simple-summary__label">Campus disponibles</p>
+                        <ul className="wz-simple-summary__list">
+                          {CAMPUS_OPTIONS.map((campus) => (
+                            <li key={campus.id}>{campus.nombre}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="wz-simple-summary__block">
+                        <p className="wz-simple-summary__label">Carreras disponibles</p>
+                        <ul className="wz-simple-summary__list">
+                          {PROGRAM_OPTIONS.map((program) => (
+                            <li key={program.id}>{program.nombre}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                    <Field
+                      label="Campus"
+                      name="campusId"
+                      required
+                      hint="Selecciona dónde deseas cursar tus estudios"
+                      error={e('campusId')}
+                    >
+                      <select id="campusId" name="campusId" value={formData.campusId} onChange={handleChange}>
+                        <option value="">Selecciona un campus</option>
+                        {CAMPUS_OPTIONS.map((campus) => (
+                          <option key={campus.id} value={campus.id}>
+                            {campus.nombre}
+                          </option>
+                        ))}
+                      </select>
                     </Field>
-                    <Field label="Carrera ID" name="carreraId" required hint="UUID de la carrera deseada" error={e('carreraId')}>
-                      <input id="carreraId" name="carreraId" value={formData.carreraId} onChange={handleChange} placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+                    <Field
+                      label="Carrera"
+                      name="carreraId"
+                      required
+                      hint="Selecciona el programa académico que quieres estudiar"
+                      error={e('carreraId')}
+                    >
+                      <select id="carreraId" name="carreraId" value={formData.carreraId} onChange={handleChange}>
+                        <option value="">Selecciona una carrera</option>
+                        {PROGRAM_OPTIONS.map((program) => (
+                          <option key={program.id} value={program.id}>
+                            {program.nombre}
+                          </option>
+                        ))}
+                      </select>
                     </Field>
                   </>
                 )}
@@ -505,7 +702,10 @@ export default function AspirantesPage() {
                         id="curp"
                         name="curp"
                         value={formData.curp}
-                        onChange={handleChange}
+                        onChange={(event) => {
+                          event.target.value = event.target.value.toUpperCase().replace(/\s+/g, '')
+                          handleChange(event)
+                        }}
                         placeholder="AAAA000000AAAAAA00"
                         maxLength={18}
                         style={{ textTransform: 'uppercase', letterSpacing: '0.06em' }}
@@ -518,7 +718,18 @@ export default function AspirantesPage() {
                 {currentStep === 2 && (
                   <>
                     <Field label="Teléfono" name="telefono" required hint="10 dígitos sin espacios · Ej. 5512345678" error={e('telefono')}>
-                      <input id="telefono" name="telefono" type="tel" value={formData.telefono} onChange={handleChange} placeholder="5512345678" />
+                      <input
+                        id="telefono"
+                        name="telefono"
+                        type="tel"
+                        value={formData.telefono}
+                        onChange={(event) => {
+                          event.target.value = event.target.value.replace(/\D/g, '').slice(0, 10)
+                          handleChange(event)
+                        }}
+                        placeholder="5512345678"
+                        maxLength={10}
+                      />
                     </Field>
                     <Field label="Correo electrónico" name="correo" required hint="Usa un correo que revises con frecuencia" error={e('correo')}>
                       <input id="correo" name="correo" type="email" value={formData.correo} onChange={handleChange} placeholder="tu@correo.com" />
@@ -542,7 +753,17 @@ export default function AspirantesPage() {
                       <input id="estado" name="estado" value={formData.estado} onChange={handleChange} placeholder="Ej. Ciudad de México" />
                     </Field>
                     <Field label="Código postal" name="codigoPostal" required hint="5 dígitos · Ej. 06600" error={e('codigoPostal')}>
-                      <input id="codigoPostal" name="codigoPostal" value={formData.codigoPostal} onChange={handleChange} placeholder="06600" maxLength={5} />
+                      <input
+                        id="codigoPostal"
+                        name="codigoPostal"
+                        value={formData.codigoPostal}
+                        onChange={(event) => {
+                          event.target.value = event.target.value.replace(/\D/g, '').slice(0, 5)
+                          handleChange(event)
+                        }}
+                        placeholder="06600"
+                        maxLength={5}
+                      />
                     </Field>
                   </>
                 )}
@@ -622,6 +843,13 @@ export default function AspirantesPage() {
                         <span className="wz-checkbox__text">Me identifico como afrodescendiente</span>
                       </label>
                     </div>
+                    <div className="wz-grid__full">
+                      <label className="wz-checkbox">
+                        <input type="checkbox" name="esIndigena" checked={formData.esIndigena} onChange={handleChange} />
+                        <span className="wz-checkbox__box" aria-hidden="true" />
+                        <span className="wz-checkbox__text">Me identifico como persona indígena</span>
+                      </label>
+                    </div>
                   </>
                 )}
 
@@ -638,7 +866,49 @@ export default function AspirantesPage() {
                       <input id="ocupacionResponsable" name="ocupacionResponsable" value={formData.ocupacionResponsable} onChange={handleChange} placeholder="Ej. Docente" />
                     </Field>
                     <Field label="Teléfono del responsable" name="telefonoResponsable" required hint="10 dígitos sin espacios" error={e('telefonoResponsable')}>
-                      <input id="telefonoResponsable" name="telefonoResponsable" type="tel" value={formData.telefonoResponsable} onChange={handleChange} placeholder="5512345678" />
+                      <input
+                        id="telefonoResponsable"
+                        name="telefonoResponsable"
+                        type="tel"
+                        value={formData.telefonoResponsable}
+                        onChange={(event) => {
+                          event.target.value = event.target.value.replace(/\D/g, '').slice(0, 10)
+                          handleChange(event)
+                        }}
+                        placeholder="5512345678"
+                        maxLength={10}
+                      />
+                    </Field>
+                    <Field label="Calle del responsable" name="calleResponsable" required error={e('calleResponsable')}>
+                      <input id="calleResponsable" name="calleResponsable" value={formData.calleResponsable} onChange={handleChange} placeholder="Ej. Av. Central" />
+                    </Field>
+                    <Field label="Colonia del responsable" name="coloniaResponsable" required error={e('coloniaResponsable')}>
+                      <input id="coloniaResponsable" name="coloniaResponsable" value={formData.coloniaResponsable} onChange={handleChange} placeholder="Ej. Centro" />
+                    </Field>
+                    <Field label="Municipio del responsable" name="municipioResponsable" required error={e('municipioResponsable')}>
+                      <input id="municipioResponsable" name="municipioResponsable" value={formData.municipioResponsable} onChange={handleChange} placeholder="Ej. Oaxaca de Juárez" />
+                    </Field>
+                    <Field label="Estado del responsable" name="estadoResponsable" required error={e('estadoResponsable')}>
+                      <input id="estadoResponsable" name="estadoResponsable" value={formData.estadoResponsable} onChange={handleChange} placeholder="Ej. Oaxaca" />
+                    </Field>
+                    <Field
+                      label="Código postal del responsable"
+                      name="codigoPostalResponsable"
+                      required
+                      hint="5 dígitos"
+                      error={e('codigoPostalResponsable')}
+                    >
+                      <input
+                        id="codigoPostalResponsable"
+                        name="codigoPostalResponsable"
+                        value={formData.codigoPostalResponsable}
+                        onChange={(event) => {
+                          event.target.value = event.target.value.replace(/\D/g, '').slice(0, 5)
+                          handleChange(event)
+                        }}
+                        placeholder="Ej. 68000"
+                        maxLength={5}
+                      />
                     </Field>
                     <Field label="Lugar de aplicación del examen" name="lugarAplicacion" required hint="Ciudad o sede donde presentarás tu examen" error={e('lugarAplicacion')}>
                       <input id="lugarAplicacion" name="lugarAplicacion" value={formData.lugarAplicacion} onChange={handleChange} placeholder="Ej. Campus Norte" />
