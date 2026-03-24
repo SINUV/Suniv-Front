@@ -1106,183 +1106,536 @@
   color: color-mix(in srgb, var(--suniv-dark) 78%, var(--suniv-white));
 }
 
-/* ─── Aspirantes: steps ───────────────────────────────── */
-.steps-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 1.4rem;
+/* ─── Aspirantes: Wizard ──────────────────────────────── */
+.wz-section {
+  padding-block: 1rem 4rem;
 }
 
-.step-card {
-  background: rgba(255, 255, 255, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  border-radius: 20px;
-  padding: 1.8rem 1.5rem;
+/* ── Indicador de progreso ── */
+.wz-progress {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  gap: 0;
+}
+
+.wz-progress__item {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  box-shadow: 0 8px 30px -20px rgba(50, 51, 34, 0.2);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  align-items: center;
+  gap: 0.45rem;
+  flex: 1;
+  min-width: 64px;
+  max-width: 130px;
+  position: relative;
 }
 
-.step-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 16px 40px -24px rgba(50, 51, 34, 0.28);
+/* Línea conectora entre pasos */
+.wz-progress__item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: calc(50% + 20px);
+  right: calc(-50% + 20px);
+  height: 2px;
+  background: #e5e7eb;
+  transition: background 0.35s ease;
+  z-index: 0;
 }
 
-.step-num {
-  font-size: 2.4rem;
-  font-weight: 900;
-  color: var(--suniv-primary);
-  line-height: 1;
-  opacity: 0.85;
+.wz-progress__item.is-done:not(:last-child)::after {
+  background: #16a34a;
 }
 
-.step-title {
-  margin: 0;
-  font-size: 1.1rem;
+.wz-progress__bubble {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
   font-weight: 700;
+  background: #f3f4f6;
+  color: #9ca3af;
+  border: 2px solid #e5e7eb;
+  position: relative;
+  z-index: 1;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.wz-progress__item.is-done .wz-progress__bubble {
+  background: #dcfce7;
+  border-color: #16a34a;
+  color: #16a34a;
+}
+
+.wz-progress__item.is-active .wz-progress__bubble {
+  background: var(--suniv-primary);
+  border-color: var(--suniv-primary);
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(230, 57, 48, 0.16);
+}
+
+.wz-progress__label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-align: center;
+  line-height: 1.3;
+  transition: color 0.25s ease;
+}
+
+.wz-progress__item.is-done .wz-progress__label,
+.wz-progress__item.is-active .wz-progress__label {
   color: var(--suniv-dark);
 }
 
-.step-desc {
-  margin: 0;
-  font-size: 0.97rem;
-  line-height: 1.65;
-  color: color-mix(in srgb, var(--suniv-dark) 76%, var(--suniv-white));
-}
-
-/* ─── Aspirantes: requisitos ──────────────────────────── */
-.req-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 0.85rem;
-  max-width: 860px;
+/* ── Tarjeta del paso ── */
+.wz-card {
+  background: #ffffff;
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 4px 32px -8px rgba(0, 0, 0, 0.1), 0 1px 6px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  max-width: 840px;
   margin-inline: auto;
 }
 
-.req-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(230, 57, 48, 0.14);
-  border-radius: 12px;
-  padding: 0.85rem 1.1rem;
-  font-size: 0.98rem;
+.wz-card__head {
+  padding: 2rem 2.5rem 1.6rem;
+  border-bottom: 1px solid rgba(17, 17, 17, 0.06);
+  background: linear-gradient(140deg, #fafafa 0%, rgba(230, 57, 48, 0.025) 100%);
+}
+
+.wz-card__badge {
+  display: inline-block;
+  background: rgba(230, 57, 48, 0.1);
+  color: var(--suniv-primary);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 0.28rem 0.85rem;
+  margin-bottom: 0.8rem;
+}
+
+.wz-card__title {
+  margin: 0 0 0.4rem;
+  font-size: clamp(1.3rem, 2.6vw, 1.75rem);
+  font-weight: 800;
   color: var(--suniv-dark);
-  font-weight: 500;
+  line-height: 1.2;
 }
 
-.aspirantes-form-section {
-  display: grid;
-  gap: 1rem;
+.wz-card__desc {
+  margin: 0;
+  font-size: 0.97rem;
+  color: color-mix(in srgb, var(--suniv-dark) 62%, white);
+  line-height: 1.65;
+  max-width: 62ch;
 }
 
-.aspirantes-form {
+.wz-card__body {
+  padding: 2rem 2.5rem;
   display: grid;
-  gap: 1rem;
+  gap: 1.8rem;
 }
 
-.aspirantes-form__grid {
+/* ── Grid de campos ── */
+.wz-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 0.9rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.15rem;
+  animation: wzFadeIn 0.28s ease both;
 }
 
-.aspirantes-form label {
-  display: grid;
-  gap: 0.35rem;
-  font-size: 0.92rem;
+@keyframes wzFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wz-grid__full {
+  grid-column: 1 / -1;
+}
+
+/* ── Campo individual ── */
+.wz-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.38rem;
+}
+
+.wz-field__label {
+  font-size: 0.875rem;
   font-weight: 700;
-  color: color-mix(in srgb, var(--suniv-dark) 82%, var(--suniv-white));
+  color: #374151;
+  letter-spacing: -0.01em;
 }
 
-.aspirantes-form input,
-.aspirantes-form select,
+.wz-field__req {
+  color: var(--suniv-primary);
+  font-weight: 900;
+}
+
+.wz-field input,
+.wz-field select,
 .folio-input {
   width: 100%;
-  border: 1px solid rgba(17, 17, 17, 0.16);
-  background: rgba(255, 255, 255, 0.78);
+  padding: 0.72rem 0.95rem;
+  border: 1.5px solid #e5e7eb;
   border-radius: 10px;
-  padding: 0.72rem 0.8rem;
-  font-size: 0.96rem;
+  font-size: 0.97rem;
   color: var(--suniv-dark);
+  background: #fff;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: inherit;
 }
 
-.aspirantes-form input:focus,
-.aspirantes-form select:focus,
+.wz-field select,
+.folio-input:not([type]) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%236b7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  padding-right: 2.4rem;
+  cursor: pointer;
+}
+
+.wz-field input:focus,
+.wz-field select:focus,
 .folio-input:focus {
   border-color: var(--suniv-primary);
-  box-shadow: 0 0 0 3px rgba(230, 57, 48, 0.12);
+  box-shadow: 0 0 0 3px rgba(230, 57, 48, 0.1);
 }
 
-.aspirantes-form__checkbox {
+.wz-field input::placeholder {
+  color: #b8bec7;
+  font-weight: 400;
+}
+
+.wz-field--error input,
+.wz-field--error select {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.09);
+}
+
+.wz-field__hint {
+  font-size: 0.79rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.wz-field__error {
+  font-size: 0.8rem;
+  color: #dc2626;
+  font-weight: 600;
   display: flex;
   align-items: center;
+  gap: 0.3rem;
+  line-height: 1.3;
+}
+
+/* ── Banner informativo dentro del paso ── */
+.wz-info-banner {
+  display: flex;
+  align-items: flex-start;
   gap: 0.6rem;
+  background: rgba(249, 250, 251, 0.9);
+  border: 1px solid rgba(107, 114, 128, 0.2);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: #4b5563;
+  line-height: 1.5;
   font-weight: 500;
 }
 
-.aspirantes-form__checkbox input {
-  width: auto;
+.wz-info-banner svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: #6b7280;
 }
 
-.form-error {
-  color: #b71d16;
-  font-weight: 600;
-  font-size: 0.82rem;
+.wz-info-banner--blue {
+  background: rgba(239, 246, 255, 0.9);
+  border-color: rgba(96, 165, 250, 0.3);
+  color: #1e40af;
 }
 
-.form-summary-error {
-  margin: 0;
-  border: 1px solid rgba(183, 29, 22, 0.25);
-  background: rgba(183, 29, 22, 0.08);
-  color: #8b120d;
+.wz-info-banner--blue svg {
+  color: #3b82f6;
+}
+
+/* ── Checkbox personalizado ── */
+.wz-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.wz-checkbox input[type='checkbox'] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.wz-checkbox__box {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 1.5px solid #d1d5db;
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  margin-top: 2px;
+  position: relative;
+}
+
+.wz-checkbox input[type='checkbox']:checked + .wz-checkbox__box {
+  background: var(--suniv-primary);
+  border-color: var(--suniv-primary);
+}
+
+.wz-checkbox input[type='checkbox']:checked + .wz-checkbox__box::after {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 6px;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(-45deg) translateY(-1px);
+}
+
+.wz-checkbox input[type='checkbox']:focus + .wz-checkbox__box {
+  box-shadow: 0 0 0 3px rgba(230, 57, 48, 0.15);
+}
+
+.wz-checkbox--error .wz-checkbox__box {
+  border-color: #ef4444;
+}
+
+.wz-checkbox__text {
+  font-size: 0.95rem;
+  color: var(--suniv-dark);
+  line-height: 1.55;
+}
+
+/* ── Bloque de consentimiento ── */
+.wz-consent {
+  background: rgba(230, 57, 48, 0.03);
+  border: 1px solid rgba(230, 57, 48, 0.14);
   border-radius: 12px;
-  padding: 0.75rem 0.9rem;
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+/* ── Navegación del wizard ── */
+.wz-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(17, 17, 17, 0.07);
+}
+
+.wz-nav__back {
+  background: none;
+  border: none;
+  font-size: 0.95rem;
   font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  transition: color 0.15s;
+  font-family: inherit;
 }
 
-.folio-success {
-  border-radius: 16px;
-  border: 1px solid rgba(12, 122, 74, 0.22);
-  background: rgba(19, 173, 104, 0.08);
-  padding: 1rem;
-  display: grid;
-  gap: 0.45rem;
+.wz-nav__back:hover {
+  color: var(--suniv-dark);
 }
 
-.folio-success__label {
+.wz-nav__right {
+  margin-left: auto;
+}
+
+.wz-submit-error {
   margin: 0;
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #0d6a42;
-  font-weight: 800;
-}
-
-.folio-success__folio {
-  margin: 0;
-  font-size: clamp(1.35rem, 2.8vw, 1.9rem);
-  font-weight: 900;
-  color: #064c2f;
-  line-height: 1.1;
-}
-
-.folio-success__meta {
-  margin: 0;
+  padding: 0.8rem 1rem;
+  background: rgba(220, 38, 38, 0.07);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  border-radius: 10px;
+  color: #b91c1c;
   font-size: 0.92rem;
-  color: color-mix(in srgb, #064c2f 72%, white);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* ── Tarjeta de éxito ── */
+.wz-success {
+  max-width: 540px;
+  margin-inline: auto;
+  text-align: center;
+  padding: 2.8rem 2rem;
+  background: #fff;
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 4px 32px -8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.wz-success__icon {
+  margin-bottom: 0.25rem;
+}
+
+.wz-success__title {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 900;
+  color: var(--suniv-dark);
+}
+
+.wz-success__sub {
+  margin: 0;
+  font-size: 1rem;
+  color: #6b7280;
+  max-width: 38ch;
+  line-height: 1.55;
+}
+
+.wz-success__folio-box {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: #f0fdf4;
+  border: 1.5px solid #86efac;
+  border-radius: 16px;
+  padding: 1.1rem 1.5rem;
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.wz-success__folio-label {
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #166534;
+  white-space: nowrap;
+}
+
+.wz-success__folio-num {
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  font-weight: 900;
+  color: #14532d;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.wz-success__copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: none;
+  border: 1.5px solid #86efac;
+  border-radius: 8px;
+  padding: 0.38rem 0.85rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #166534;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  font-family: inherit;
+}
+
+.wz-success__copy-btn:hover {
+  background: #dcfce7;
+  border-color: #4ade80;
+}
+
+.wz-success__meta {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.9rem;
+  color: #4b5563;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.wz-success__status {
+  margin: 0;
+  font-size: 0.88rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  padding: 0.6rem 1.1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  width: 100%;
+}
+
+/* ── folio-input standalone (sección consulta) ── */
+.folio-input {
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 0.72rem 0.95rem;
+  font-size: 0.97rem;
+  color: var(--suniv-dark);
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  font-family: inherit;
+}
+
+.folio-input:focus {
+  border-color: var(--suniv-primary);
+  box-shadow: 0 0 0 3px rgba(230, 57, 48, 0.1);
 }
 
 .aspirantes-api__actions--inline {
   align-items: center;
+}
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+  .wz-card__head,
+  .wz-card__body {
+    padding: 1.4rem 1.2rem;
+  }
+
+  .wz-progress__label {
+    display: none;
+  }
+
+  .wz-progress__item {
+    min-width: 44px;
+    max-width: 60px;
+  }
 }
 
 /* ─── Programas: grid de áreas ────────────────────────── */
