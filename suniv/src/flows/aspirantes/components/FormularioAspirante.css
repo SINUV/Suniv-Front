@@ -1,0 +1,114 @@
+.asp-form {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 1.25rem;
+  box-shadow: 0 24px 44px -38px rgba(0, 0, 0, 0.45);
+}
+
+.asp-form__header h2 {
+  margin: 0.2rem 0;
+}
+
+.asp-form__header p {
+  margin: 0;
+  color: #475569;
+}
+
+.asp-form__folio {
+  margin-top: 0.45rem !important;
+  font-weight: 700;
+  color: #111827 !important;
+}
+
+.asp-form__loading {
+  margin: 0.6rem 0;
+  font-weight: 600;
+  color: #1d4ed8;
+}
+
+.asp-form__body {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.asp-form__section {
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1rem;
+}
+
+.asp-form__section legend {
+  font-weight: 700;
+  padding: 0 0.35rem;
+}
+
+.asp-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.asp-form__field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.asp-form__field label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.asp-form__field input,
+.asp-form__field select {
+  min-height: 42px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.95rem;
+}
+
+.asp-form__field small,
+.asp-form__checkbox small {
+  color: #b91c1c;
+  font-size: 0.82rem;
+}
+
+.asp-form__checkbox {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.6rem;
+  align-items: center;
+  color: #1f2937;
+}
+
+.asp-form__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.asp-form__result {
+  margin: 0;
+  border-radius: 10px;
+  padding: 0.7rem 0.8rem;
+  font-weight: 600;
+}
+
+.asp-form__result--error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.asp-form__result--ok {
+  background: #dcfce7;
+  color: #166534;
+}
+
+@media (max-width: 860px) {
+  .asp-form__grid {
+    grid-template-columns: 1fr;
+  }
+}

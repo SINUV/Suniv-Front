@@ -1,4 +1,8 @@
-import { validateAdmisionPayload } from '../utils/admisionValidation'
+import {
+  FORM_DEFAULT_VALUES,
+  mergeWithDefaults,
+  normalizeAspirantePayload,
+} from '../flows/aspirantes/formModel'
 
 const DEFAULT_BASE_URL = 'http://localhost:5249'
 const API_BASE_URL = (
@@ -23,6 +27,72 @@ function parseResponseBody(contentType, rawText) {
   }
 
   return { message: rawText }
+}
+
+const ASPIRANTE_SNAPSHOT_PREFIX = 'suniv_aspirante_snapshot_'
+const ASPIRANTE_SNAPSHOT_LAST_KEY = 'suniv_aspirante_snapshot_last'
+
+function getSnapshotKey(folio) {
+  return `${ASPIRANTE_SNAPSHOT_PREFIX}${String(folio || '').trim().toUpperCase()}`
+}
+
+function hasFormFields(value) {
+  if (!value || typeof value !== 'object') return false
+  const fields = Object.keys(FORM_DEFAULT_VALUES)
+  return fields.some((field) => value[field] !== undefined && value[field] !== null)
+}
+
+function extractAspiranteFromStatusPayload(payload) {
+  const source = payload?.data || payload || {}
+  const candidates = [
+    source.aspirante,
+    source.formulario,
+    source.registro,
+    source.detalle,
+    source.data?.aspirante,
+    source.data?.formulario,
+    source.data?.registro,
+    source.data?.detalle,
+    source,
+  ]
+
+  return candidates.find((candidate) => hasFormFields(candidate)) || null
+}
+
+function readSnapshot(folio) {
+  if (typeof localStorage === 'undefined') return null
+
+  const byFolio = localStorage.getItem(getSnapshotKey(folio))
+  if (byFolio) {
+    try {
+      return JSON.parse(byFolio)
+    } catch {
+      localStorage.removeItem(getSnapshotKey(folio))
+    }
+  }
+
+  const last = localStorage.getItem(ASPIRANTE_SNAPSHOT_LAST_KEY)
+  if (!last) return null
+
+  try {
+    return JSON.parse(last)
+  } catch {
+    localStorage.removeItem(ASPIRANTE_SNAPSHOT_LAST_KEY)
+    return null
+  }
+}
+
+export function cacheAspiranteSnapshot(folio, payload) {
+  if (typeof localStorage === 'undefined' || !payload) return
+
+  const normalizedFolio = String(folio || '').trim().toUpperCase()
+  const snapshot = mergeWithDefaults(payload)
+
+  if (normalizedFolio) {
+    localStorage.setItem(getSnapshotKey(normalizedFolio), JSON.stringify(snapshot))
+  }
+
+  localStorage.setItem(ASPIRANTE_SNAPSHOT_LAST_KEY, JSON.stringify(snapshot))
 }
 
 async function requestJson(path, options = {}, retryCount = 1) {
@@ -100,15 +170,6 @@ export async function smokeTestInscripcionStatus(folio = 'TEST-000001') {
 }
 
 export async function submitAdmisionFormulario(payload) {
-  const validation = validateAdmisionPayload(payload)
-
-  if (!validation.isValid) {
-    const error = new Error('Payload de admision invalido')
-    error.type = 'VALIDATION_ERROR'
-    error.fieldErrors = validation.errors
-    throw error
-  }
-
   const data = await apiPost('/api/Admision/formulario', payload)
 
   return {
@@ -142,6 +203,112 @@ export async function consultarStatusInscripcion(folio) {
     found: true,
     data: result.data,
     status: result.status,
+  }
+}
+
+export async function submitInscripcionFormulario(payload) {
+  const data = await apiPost('/api/Inscripciones/formulario', payload)
+
+  return {
+    ok: Boolean(data?.success ?? data?.succes ?? true),
+    status: 200,
+    data,
+  }
+}
+
+const MOCK_INSCRIPCION_BY_FOLIO = {
+  'FOL-2026-000123': {
+    estado: 'Aprobado',
+    aspirante: normalizeAspirantePayload(
+      mergeWithDefaults({
+        campusId: '6283ba78-af47-4291-ab87-4325310e866f',
+        carreraId: 'b30269e1-326c-4958-839a-d9d85003dc9e',
+        nombre: 'Andrea',
+        apellidoPaterno: 'Santiago',
+        apellidoMaterno: 'Perez',
+        fechaNacimiento: '2006-06-19',
+        sexo: 'F',
+        estadoCivil: 'Soltera',
+        curp: 'SAPA060619MOCRRN06',
+        telefono: '9512013402',
+        correo: 'andrea.santiago@demo.com',
+        calle: 'Avenida Reforma',
+        numExt: '120',
+        colonia: 'Centro',
+        municipio: 'Oaxaca de Juarez',
+        estado: 'Oaxaca',
+        codigoPostal: '68000',
+        nombreEscuela: 'CBTIS 26',
+        tipoEscuela: 'Publica',
+        areaConocimiento: 'Fisico-Matematicas',
+        anioIngreso: '2021',
+        anioEgreso: '2024',
+        promedioFinal: '9.2',
+        medioEnterado: 'Facebook',
+        tipoSangre: 'O+',
+        nombreResponsable: 'Rogelio Santiago',
+        parentesco: 'Padre',
+        telefonoResponsable: '9513987450',
+        calleResponsable: 'Avenida Reforma',
+        coloniaResponsable: 'Centro',
+        municipioResponsable: 'Oaxaca de Juarez',
+        estadoResponsable: 'Oaxaca',
+        codigoPostalResponsable: '68000',
+        lugarAplicacion: 'Campus San Jacinto',
+        consentimiento: true,
+      }),
+    ),
+  },
+}
+
+export async function fetchAspiranteByFolioForInscripcion(folio) {
+  await sleep(900)
+
+  const fallback = {
+    estado: 'Aprobado',
+    aspirante: normalizeAspirantePayload(FORM_DEFAULT_VALUES),
+  }
+
+  const normalizedFolio = String(folio || '').trim().toUpperCase()
+
+  const statusResult = await apiGet(
+    `/api/Inscripciones/consulta/status/${encodeURIComponent(normalizedFolio)}`,
+  )
+
+  const fromBackend = statusResult.ok ? extractAspiranteFromStatusPayload(statusResult.data) : null
+
+  if (fromBackend) {
+    const aspirante = mergeWithDefaults(fromBackend)
+    cacheAspiranteSnapshot(normalizedFolio, aspirante)
+
+    return {
+      found: true,
+      folio: normalizedFolio,
+      data: {
+        estado: statusResult.data?.estado_aspirante || statusResult.data?.estado || 'Aprobado',
+        aspirante,
+      },
+    }
+  }
+
+  const fromSnapshot = readSnapshot(normalizedFolio)
+  if (fromSnapshot) {
+    return {
+      found: true,
+      folio: normalizedFolio,
+      data: {
+        estado: 'Aprobado',
+        aspirante: mergeWithDefaults(fromSnapshot),
+      },
+    }
+  }
+
+  const data = MOCK_INSCRIPCION_BY_FOLIO[normalizedFolio] || fallback
+
+  return {
+    found: Boolean(MOCK_INSCRIPCION_BY_FOLIO[normalizedFolio]),
+    folio: normalizedFolio,
+    data,
   }
 }
 
