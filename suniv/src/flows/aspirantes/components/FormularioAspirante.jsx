@@ -33,6 +33,11 @@ const MODE_UI = {
   },
 }
 
+const INSCRIPCION_ONLY_FIELDS = {
+  aceptoReglamento: false,
+  autorizacionInformar: true,
+}
+
 const SECTION_CONFIG = [
   {
     id: 'persona',
@@ -201,6 +206,10 @@ function getFieldRules(fieldName) {
       return {
         validate: (value) => Boolean(value) || 'Debes aceptar el consentimiento.',
       }
+    case 'aceptoReglamento':
+      return {
+        validate: (value) => Boolean(value) || 'Debes aceptar el reglamento para inscribirte.',
+      }
     default:
       return FIELD_META[fieldName]?.required ? { required: 'Este campo es obligatorio.' } : {}
   }
@@ -277,7 +286,23 @@ export default function FormularioAspirante({
   const [submitOkMessage, setSubmitOkMessage] = useState('')
 
   const ui = MODE_UI[mode]
-  const defaultValues = useMemo(() => mergeWithDefaults(initialData || FORM_DEFAULT_VALUES), [initialData])
+  const defaultValues = useMemo(() => {
+    const merged = mergeWithDefaults(initialData || FORM_DEFAULT_VALUES)
+
+    if (mode === FORM_MODES.INSCRIPCION) {
+      return {
+        ...merged,
+        ...INSCRIPCION_ONLY_FIELDS,
+        aceptoReglamento: Boolean(initialData?.aceptoReglamento),
+        autorizacionInformar:
+          initialData?.autorizacionInformar === undefined
+            ? INSCRIPCION_ONLY_FIELDS.autorizacionInformar
+            : Boolean(initialData.autorizacionInformar),
+      }
+    }
+
+    return merged
+  }, [initialData, mode])
 
   const {
     register,
@@ -318,7 +343,12 @@ export default function FormularioAspirante({
       const result =
         mode === FORM_MODES.ASPIRANTE
           ? await submitAdmisionFormulario(payload)
-          : await submitInscripcionFormulario({ folio, ...payload })
+          : await submitInscripcionFormulario({
+              folio,
+              ...payload,
+              aceptoReglamento: Boolean(values.aceptoReglamento),
+              autorizacionInformar: Boolean(values.autorizacionInformar),
+            })
 
       const backendData = result?.data?.data || result?.data || {}
       const responseFolio = backendData.folio || folio
@@ -411,6 +441,25 @@ export default function FormularioAspirante({
         )}
 
         {submitOkMessage && <p className="asp-form__result asp-form__result--ok">{submitOkMessage}</p>}
+
+        {mode === FORM_MODES.INSCRIPCION && (
+          <fieldset className="asp-form__section">
+            <legend>Validaciones de inscripcion</legend>
+            <div className="asp-form__grid">
+              <label className="asp-form__checkbox">
+                <input type="checkbox" {...register('aceptoReglamento', getFieldRules('aceptoReglamento'))} />
+                <span>Acepto el reglamento institucional</span>
+                {errors.aceptoReglamento?.message && <small>{errors.aceptoReglamento.message}</small>}
+              </label>
+
+              <label className="asp-form__checkbox">
+                <input type="checkbox" {...register('autorizacionInformar', getFieldRules('autorizacionInformar'))} />
+                <span>Autorizo informar avances academicos al responsable</span>
+                {errors.autorizacionInformar?.message && <small>{errors.autorizacionInformar.message}</small>}
+              </label>
+            </div>
+          </fieldset>
+        )}
       </form>
     </section>
   )
