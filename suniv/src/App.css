@@ -391,7 +391,7 @@
   font-weight: 1000;
   letter-spacing: 0;
   text-transform: uppercase;
-  background: linear-gradient(110deg, #e63930 0%, #ff5a9a 40%, #d1006b 100%);
+  background: linear-gradient(110deg, #22c55e 0%, #34d399 40%, #15803d 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -409,12 +409,12 @@
   gap: 1.2rem;
   margin: 0 auto 2rem;
   padding: clamp(2.8rem, 6vw, 4rem);
-  background: linear-gradient(135deg, #f94568 0%, #ff5a9a 35%, #d1006b 100%);
+  background: linear-gradient(135deg, #22c55e 0%, #34d399 35%, #15803d 100%);
   border-radius: 20px;
   color: #ffffff;
   max-width: fit-content;
   width: auto;
-  box-shadow: 0 20px 50px rgba(217, 16, 87, 0.15);
+  box-shadow: 0 20px 50px rgba(21, 128, 61, 0.2);
   transition: all 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
@@ -428,7 +428,7 @@
 }
 
 .home-model__accent {
-  color: #ffffff;
+  color: #9be7b1;
   font-weight: 600;
 }
 
