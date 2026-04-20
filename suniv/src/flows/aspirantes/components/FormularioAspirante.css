@@ -112,3 +112,67 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Wizard / Stepper styles */
+.asp-form__stepper {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.asp-form__stepper-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.7rem;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e6eef6;
+  cursor: pointer;
+  font-weight: 700;
+  color: #334155;
+}
+
+.asp-form__stepper-item.is-active {
+  background: linear-gradient(90deg,var(--suniv-primary),var(--suniv-secondary));
+  color: #fff;
+  border-color: rgba(0,0,0,0.06);
+}
+
+.asp-form__stepper-item .step-index {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.04);
+  font-size: 0.85rem;
+}
+
+.asp-form__stepper-item.is-active .step-index {
+  background: rgba(255,255,255,0.12);
+}
+
+.asp-form__actions--wizard {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.asp-form__actions--wizard .secondary-button {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+@media (max-width: 640px) {
+  .asp-form__stepper {
+    gap: 0.4rem;
+  }
+  .asp-form__stepper-item {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.92rem;
+  }
+}

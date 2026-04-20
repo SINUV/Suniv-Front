@@ -131,10 +131,6 @@ export default function AspirantesPage() {
       <section className="content-section aspirantes-flow__grid">
         <article className="aspirantes-panel aspirantes-panel--consulta">
           <h2>Consulta por folio</h2>
-          <p>
-            Consulta el estado de tu aspirante en el endpoint
-            <strong> GET /api/Inscripciones/consulta/status/{'{folio}'}</strong>.
-          </p>
 
           <div className="aspirantes-panel__inline">
             <input

@@ -309,9 +309,14 @@ export default function FormularioAspirante({
     reset,
     handleSubmit,
     control,
+    trigger,
     setValue,
     formState: { errors, isSubmitting },
   } = useForm({ defaultValues })
+
+  const [currentStep, setCurrentStep] = useState(0)
+  const stepCount = SECTION_CONFIG.length
+  const isLastStep = currentStep === stepCount - 1
 
   const campusId = useWatch({ control, name: 'campusId' })
   const selectedCareer = useWatch({ control, name: 'carreraId' })
@@ -381,9 +386,30 @@ export default function FormularioAspirante({
         <p className="asp-form__loading">Cargando datos del aspirante...</p>
       )}
 
-      <form className="asp-form__body" onSubmit={onSubmit} noValidate>
-        {SECTION_CONFIG.map((section) => (
-          <fieldset key={section.id} className="asp-form__section">
+      {/* Stepper */}
+      <div className="asp-form__stepper" role="tablist" aria-label="Progreso del formulario">
+        {SECTION_CONFIG.map((s, idx) => (
+          <button
+            key={s.id}
+            type="button"
+            className={`asp-form__stepper-item ${idx === currentStep ? 'is-active' : ''}`}
+            onClick={() => setCurrentStep(idx)}
+            aria-current={idx === currentStep}
+          >
+            <span className="step-index">{String(idx + 1).padStart(2, '0')}</span>
+            <span className="step-title">{s.title}</span>
+          </button>
+        ))}
+      </div>
+
+      <form className="asp-form__body" onSubmit={(e) => e.preventDefault()} noValidate>
+        {SECTION_CONFIG.map((section, idx) => (
+          <fieldset
+            key={section.id}
+            className="asp-form__section"
+            style={{ display: idx === currentStep ? 'block' : 'none' }}
+            aria-hidden={idx === currentStep ? 'false' : 'true'}
+          >
             <legend>{section.title}</legend>
 
             <div className="asp-form__grid">
@@ -428,10 +454,77 @@ export default function FormularioAspirante({
           </fieldset>
         ))}
 
-        <div className="asp-form__actions">
-          <button className="primary-button" type="submit" disabled={isSubmitting || isLoadingInitialData}>
-            {isSubmitting ? 'Enviando...' : ui.submitLabel}
-          </button>
+        {mode === FORM_MODES.INSCRIPCION && (
+          <fieldset
+            className="asp-form__section"
+            style={{ display: isLastStep ? 'block' : 'none' }}
+            aria-hidden={isLastStep ? 'false' : 'true'}
+          >
+            <legend>Validaciones de inscripcion</legend>
+            <div className="asp-form__grid">
+              <label className="asp-form__checkbox">
+                <input type="checkbox" {...register('aceptoReglamento', getFieldRules('aceptoReglamento'))} />
+                <span>Acepto el reglamento institucional</span>
+                {errors.aceptoReglamento?.message && <small>{errors.aceptoReglamento.message}</small>}
+              </label>
+
+              <label className="asp-form__checkbox">
+                <input type="checkbox" {...register('autorizacionInformar', getFieldRules('autorizacionInformar'))} />
+                <span>Autorizo informar avances academicos al responsable</span>
+                {errors.autorizacionInformar?.message && <small>{errors.autorizacionInformar.message}</small>}
+              </label>
+            </div>
+          </fieldset>
+        )}
+
+        <div className="asp-form__actions asp-form__actions--wizard">
+          <div>
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
+              disabled={currentStep === 0 || isSubmitting || isLoadingInitialData}
+            >
+              Anterior
+            </button>
+          </div>
+
+          <div>
+            {!isLastStep ? (
+              <button
+                type="button"
+                className="primary-button"
+                onClick={async () => {
+                  const section = SECTION_CONFIG[currentStep]
+                  const ok = await trigger(section.fields)
+                  if (ok) setCurrentStep((s) => Math.min(stepCount - 1, s + 1))
+                }}
+                disabled={isSubmitting || isLoadingInitialData}
+              >
+                Siguiente
+              </button>
+            ) : (
+              <button
+                className="primary-button"
+                type="button"
+                onClick={async () => {
+                  const allFields = SECTION_CONFIG.flatMap((s) => s.fields)
+                  const ok = await trigger(allFields)
+                  if (ok) {
+                    // if inscripcion, also validate aceptoReglamento
+                    if (mode === FORM_MODES.INSCRIPCION) {
+                      const validIns = await trigger(['aceptoReglamento', 'autorizacionInformar'])
+                      if (!validIns) return
+                    }
+                    await handleSubmit()
+                  }
+                }}
+                disabled={isSubmitting || isLoadingInitialData}
+              >
+                {isSubmitting ? 'Enviando...' : ui.submitLabel}
+              </button>
+            )}
+          </div>
         </div>
 
         {submitError && (
