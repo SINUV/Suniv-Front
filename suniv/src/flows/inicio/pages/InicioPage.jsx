@@ -179,13 +179,9 @@ export default function InicioPage() {
           <div className="home-floating__copy">
             <h2 className="home-floating__title">
               Formacion cercana,{' '}
-              <span className="home-floating__title-accent">impacto real</span>
+              <span className="home-floating__title-accnte">recibe atencion
+              directa y seguimiento constante.</span>
             </h2>
-            <p className="home-floating__text">
-              NovaUniversitas, parte del Sistema de Universidades Estatales de Oaxaca,
-              esta diseñada para grupos reducidos, donde cada estudiante recibe atencion
-              directa y seguimiento constante.
-            </p>
             <p className="home-floating__text">
               Un modelo enfocado en aprender haciendo, desarrollar criterio y prepararte
               para el mundo real en Oaxaca.
