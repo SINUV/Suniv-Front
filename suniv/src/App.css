@@ -387,16 +387,11 @@
 
 .home-model-intro__eyebrow {
   margin: 0;
-  font-size: clamp(1rem, 3vw, 1.8rem);
+  font-size: clamp(1.15rem, 3.2vw, 2.05rem);
   font-weight: 1000;
   letter-spacing: 0;
   text-transform: uppercase;
-  background: linear-gradient(110deg, #22c55e 0%, #34d399 40%, #15803d 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+  color: #111111;
 }
 
 .home-model {
@@ -714,6 +709,10 @@
 }
 
 .slide.is-active .slide-caption {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .aspirantes-api {
   display: flex;
   flex-direction: column;
@@ -746,9 +745,6 @@
   font-size: 0.96rem;
   line-height: 1.6;
   word-break: break-word;
-}
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .slide-caption h2 {
@@ -1014,6 +1010,338 @@
     width: 100%;
   }
 }
+
+  /* ═══════════════════════════════════════════════════════
+     HARDENING RESPONSIVE — HOME + HEADER
+  ═══════════════════════════════════════════════════════ */
+
+  .home-page {
+    overflow-x: clip;
+  }
+
+  .home-header {
+    gap: clamp(0.75rem, 2vw, 1.5rem);
+    padding-inline: clamp(0.9rem, 3vw, 3rem);
+  }
+
+  .main-nav {
+    gap: clamp(0.2rem, 0.8vw, 0.45rem);
+    flex-wrap: nowrap;
+  }
+
+  .nav-link {
+    padding: clamp(0.45rem, 0.7vw, 0.52rem) clamp(0.72rem, 1vw, 0.95rem);
+  }
+
+  .header-end {
+    right: clamp(0.9rem, 3vw, 3rem);
+  }
+
+  .home-main {
+    width: min(1600px, calc(100% - clamp(1rem, 3vw, 3.5rem)));
+    padding: clamp(1rem, 2vw, 2rem) 0 clamp(2rem, 4vw, 3.5rem);
+  }
+
+  .hero-section {
+    padding: clamp(1rem, 2.4vw, 1.8rem);
+    border-radius: clamp(16px, 2vw, 24px);
+  }
+
+  .hero-copy {
+    max-width: min(100%, 860px);
+    margin-inline: auto;
+  }
+
+  .hero-subtitle {
+    max-width: min(60ch, 100%);
+  }
+
+  .slider-shell {
+    border-radius: clamp(20px, 2vw, 30px);
+  }
+
+  .slide-overlay {
+    padding: clamp(0.9rem, 3vw, 2rem);
+  }
+
+  .slide-caption {
+    max-width: min(92%, 560px);
+  }
+
+  .home-floating__card {
+    grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+    align-items: center;
+    gap: clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .home-floating__copy {
+    max-width: 100%;
+  }
+
+  .home-floating__text {
+    max-width: 60ch;
+  }
+
+  .home-model__header {
+    width: 100%;
+    max-width: none;
+    padding: clamp(2rem, 4vw, 4rem);
+  }
+
+  .home-model__grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: clamp(1rem, 2vw, 1.4rem);
+  }
+
+  .home-programs {
+    overflow: hidden;
+  }
+
+  .home-programs__grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: clamp(1rem, 2vw, 1.8rem);
+  }
+
+  .home-programs__card-image {
+    height: clamp(180px, 24vw, 220px);
+  }
+
+  @media (min-width: 1600px) {
+    .home-main {
+      width: min(1720px, calc(100% - 5rem));
+    }
+
+    .hero-section {
+      padding: 2rem;
+    }
+
+    .home-programs__grid,
+    .home-model__grid {
+      gap: 2rem;
+    }
+  }
+
+  @media (max-width: 1200px) {
+    .home-main {
+      width: min(1400px, calc(100% - 2rem));
+    }
+
+    .home-header {
+      padding-inline: 1.25rem;
+    }
+
+    .header-end {
+      right: 1.25rem;
+    }
+
+    .home-floating__card {
+      grid-template-columns: minmax(0, 1fr) minmax(240px, 0.9fr);
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .home-main {
+      width: calc(100% - 1.5rem);
+    }
+
+    .home-floating__card {
+      grid-template-columns: 1fr;
+    }
+
+    .home-floating__media {
+      min-height: 260px;
+    }
+
+    .home-model__header {
+      margin-bottom: 1.6rem;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .home-header {
+      padding-inline: 1rem;
+    }
+
+    .header-end {
+      right: auto;
+    }
+
+    .mobile-nav {
+      top: 76px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .home-main {
+      width: calc(100% - 1rem);
+    }
+
+    .hero-section {
+      gap: 1.15rem;
+    }
+
+    .motivational-title {
+      max-width: 13ch;
+    }
+
+    .home-model__header {
+      padding: 1.6rem 1.2rem;
+    }
+
+    .home-model__campus {
+      padding-inline: 1rem;
+    }
+
+    .slide-caption {
+      max-width: min(100%, 420px);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .home-main {
+      width: calc(100% - 0.75rem);
+      padding-top: 0.8rem;
+    }
+
+    .home-header {
+      min-height: 70px;
+      height: 70px;
+      padding-inline: 0.85rem;
+    }
+
+    .mobile-nav {
+      top: 70px;
+      padding: 0.8rem 1rem 1rem;
+    }
+
+    .hero-section {
+      padding: 0.9rem 0.75rem 1.1rem;
+    }
+
+    .hero-subtitle,
+    .home-floating__text,
+    .home-model__lead,
+    .home-programs__card p {
+      font-size: 0.97rem;
+      line-height: 1.6;
+    }
+
+    .slide {
+      aspect-ratio: 5 / 4;
+    }
+
+    .slide-caption h2 {
+      font-size: clamp(1.15rem, 5.8vw, 1.45rem);
+    }
+
+    .slide-caption p {
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .slider-arrow {
+      width: 38px;
+      height: 38px;
+    }
+
+    .slider-dots {
+      bottom: 0.75rem;
+      gap: 0.45rem;
+    }
+
+    .slider-dot {
+      width: 8px;
+      height: 8px;
+    }
+
+    .slider-dot.is-active {
+      width: 22px;
+    }
+
+    .home-floating__media {
+      min-height: 200px;
+    }
+
+    .home-programs {
+      margin-top: 2rem;
+      padding-block: 2rem;
+    }
+
+    .home-programs__header {
+      margin-bottom: 2rem;
+    }
+
+    .home-programs__card-content {
+      padding: 1.2rem 1rem 1.1rem;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .home-header {
+      min-height: 66px;
+      height: 66px;
+      padding-inline: 0.7rem;
+    }
+
+    .mobile-nav {
+      top: 66px;
+      padding-inline: 0.75rem;
+    }
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+    }
+
+    .home-main {
+      width: calc(100% - 0.5rem);
+    }
+
+    .motivational-title {
+      max-width: 11ch;
+      font-size: clamp(2rem, 9vw, 2.45rem);
+    }
+
+    .primary-button,
+    .secondary-button {
+      min-height: 44px;
+      padding: 0.78rem 1rem;
+      font-size: 0.96rem;
+    }
+
+    .slide-overlay {
+      padding: 0.75rem;
+    }
+
+    .slide-caption h2 {
+      font-size: 1.05rem;
+    }
+
+    .slide-caption p {
+      font-size: 0.86rem;
+    }
+
+    .slider-arrow {
+      width: 34px;
+      height: 34px;
+    }
+
+    .slider-arrow--left {
+      left: 0.45rem;
+    }
+
+    .slider-arrow--right {
+      right: 0.45rem;
+    }
+
+    .home-floating__card,
+    .home-model__header,
+    .home-model__card,
+    .home-programs__card-content {
+      padding-left: 0.9rem;
+      padding-right: 0.9rem;
+    }
+  }
 
 /* ═══════════════════════════════════════════════════════
    PÁGINAS INTERNAS — estilos compartidos
