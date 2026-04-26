@@ -86,7 +86,7 @@ export default function InicioPage() {
           </p>
           <div className="hero-actions">
             <Link to="/aspirantes" className="primary-button">
-              Comenzar
+              Inscribirse ahora
             </Link>
           </div>
         </div>
@@ -219,46 +219,40 @@ export default function InicioPage() {
 
         <div className="home-model__grid">
           <article className="home-model__card">
-            <h3>Ensenanza conectada en tiempo real</h3>
+            <h3>Ensenanza en tiempo real</h3>
             <p>
-              La clase se transmite en modalidad telepresencial y, cuando se usa material
-              grabado, la sesion de preguntas y respuestas se realiza{' '}
-              <span className="home-model__accent">en directo para todos los campus</span>.
+              Clases telepresenciales y sesiones de dudas en vivo para mantener el ritmo
+              academico en cada sede, en directo para todos los campus.
             </p>
           </article>
 
           <article className="home-model__card">
-            <h3>Aulas listas para aprender haciendo</h3>
+            <h3>Aulas para aprender haciendo</h3>
             <p>
-              Cada aula cuenta con computadoras por alumno, pizarrones electronicos y
-              pantallas para seguir explicaciones en vivo, con enfoque practico y
-              desarrollo de criterio.
+              Cada aula integra computadoras, pizarron electronico y pantallas para una
+              practica guiada y efectiva.
             </p>
           </article>
 
           <article className="home-model__card">
             <h3>Soporte academico permanente</h3>
             <p>
-              Un tecnico academico por aula canaliza preguntas, apoya practicas,
-              supervisa examenes y funge como tutor, bajo el control del profesor titular
-              de la materia.
+              Un tecnico academico por aula resuelve dudas, acompana practicas y da
+              seguimiento junto al docente titular.
             </p>
           </article>
 
           <article className="home-model__card">
-            <h3>Formacion integral para transformar</h3>
+            <h3>Formacion integral</h3>
             <p>
-              El trabajo academico se complementa con actividad cultural intensa y
-              acciones de vinculacion comunitaria para fortalecer una vision profesional
-              con impacto social.
+              La formacion se complementa con actividades culturales y vinculacion
+              comunitaria para generar impacto social.
             </p>
           </article>
         </div>
 
         <p className="home-model__campus">
-          Campus contemplados de NovaUniversitas: Campus Central Ocotlan, Acatlan de
-          Perez Figueroa, Huautla, Juxtlahuaca, Matias Romero, Nochixtlan, Putla y
-          Sola de Vega.
+          Campus contemplados de NovaUniversitas: Campus Central San Jacinto, Campus Santos Reyes Nopala y Campus Santiago Juxtlahuaca.
         </p>
       </section>
 
@@ -277,7 +271,7 @@ export default function InicioPage() {
               <img src={ldsImage} alt="Ingeniería en Desarrollos de Software" />
             </div>
             <div className="home-programs__card-content">
-              <h3>Ingeniería en Desarrollos de Software</h3>
+              <h3 className="home-programs__title--software">Ingeniería en Desarrollos de Software</h3>
               <p>
                 Forma profesionales capaces de diseñar, desarrollar y gestionar soluciones
                 de software innovadoras, utilizando metodologías ágiles y tecnologías de
@@ -291,7 +285,7 @@ export default function InicioPage() {
               <img src={isaImage} alt="Ingeniería en Sistemas Agroalimentarios" />
             </div>
             <div className="home-programs__card-content">
-              <h3>Ingeniería en Sistemas Agroalimentarios</h3>
+              <h3 className="home-programs__title--agro">Ingeniería en Sistemas Agroalimentarios</h3>
               <p>
                 Prepara ingenieros para optimizar procesos en la agroindustria y
                 agroalimentaria, integrando tecnología, sostenibilidad y gestión
@@ -305,7 +299,7 @@ export default function InicioPage() {
               <img src={ledmImage} alt="Licenciatura en Emprendimiento y Desarrollo de MIPyMES" />
             </div>
             <div className="home-programs__card-content">
-              <h3>Licenciatura en Emprendimiento y Desarrollo de MIPyMES</h3>
+              <h3 className="home-programs__title--mipymes">Licenciatura en Emprendimiento y Desarrollo de MIPyMES</h3>
               <p>
                 Capacita emprendedores y gestores para crear y administrar micro, pequeñas
                 y medianas empresas, promoviendo la innovación, el liderazgo y el impacto
