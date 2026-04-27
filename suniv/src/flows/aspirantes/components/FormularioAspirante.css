@@ -127,6 +127,51 @@
   color: #166534;
 }
 
+.asp-form__alert {
+  margin: 1rem 0;
+  border-radius: 12px;
+  padding: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border-left: 4px solid;
+}
+
+.asp-form__alert strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.asp-form__alert--error {
+  background: #fef2f2;
+  color: #7f1d1d;
+  border-left-color: #dc2626;
+}
+
+.asp-form__alert--success {
+  background: #f0fdf4;
+  color: #15803d;
+  border-left-color: #22c55e;
+}
+
+.asp-form__alert-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.asp-form__alert-close:hover {
+  opacity: 1;
+}
+
 @media (max-width: 860px) {
   .asp-form__grid {
     grid-template-columns: 1fr;

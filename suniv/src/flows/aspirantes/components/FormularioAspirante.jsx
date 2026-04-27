@@ -110,9 +110,9 @@ const BLOOD_TYPES = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
 const FIELD_META = {
   campusId: { label: 'Campus', type: 'select', required: true },
   carreraId: { label: 'Carrera', type: 'select', required: true },
-  nombre: { label: 'Nombre(s)', required: true },
-  apellidoPaterno: { label: 'Apellido paterno', required: true },
-  apellidoMaterno: { label: 'Apellido materno', required: true },
+  nombre: { label: 'Nombre(s)', required: true, disallowDigits: true },
+  apellidoPaterno: { label: 'Apellido paterno', required: true, disallowDigits: true },
+  apellidoMaterno: { label: 'Apellido materno', required: true, disallowDigits: true },
   fechaNacimiento: { label: 'Fecha de nacimiento', type: 'date', required: true },
   sexo: { label: 'Sexo', type: 'select', required: true },
   estadoCivil: { label: 'Estado civil', required: true },
@@ -191,6 +191,13 @@ function getFieldRules(fieldName, getValues) {
   const currentYear = new Date().getFullYear()
 
   switch (fieldName) {
+    case 'nombre':
+    case 'apellidoPaterno':
+    case 'apellidoMaterno':
+      return {
+        required: 'Este campo es obligatorio.',
+        validate: (value) => !/\d/.test(String(value || '')) || 'Este campo no admite numeros.',
+      }
     case 'campusId':
       return {
         required: 'Selecciona un campus.',
@@ -325,6 +332,10 @@ function getFieldRules(fieldName, getValues) {
 }
 
 function sanitizeInputValue(event, field) {
+  if (field.disallowDigits) {
+    event.target.value = event.target.value.replace(/\d/g, '')
+  }
+
   if (field.onlyDigits) {
     event.target.value = event.target.value.replace(/\D/g, '').slice(0, field.onlyDigits)
   }
@@ -509,7 +520,10 @@ export default function FormularioAspirante({
       setSubmitOkMessage(message)
       onSuccess?.({ mode, folio: responseFolio, backend: result })
     } catch (error) {
-      setSubmitError(error?.message || 'No se pudo enviar la informacion al backend.')
+      const errorMsg = error?.message || 'Ocurrio un error al enviar el formulario. Por favor intenta de nuevo.'
+      setSubmitError(errorMsg)
+      // Console.log mantiene info tecnica solo en consola para debug
+      console.error('[FormError]', error)
     }
   })
 
@@ -676,12 +690,24 @@ export default function FormularioAspirante({
         </div>
 
         {submitError && (
-          <p className="asp-form__result asp-form__result--error" role="alert">
-            {submitError}
-          </p>
+          <div className="asp-form__alert asp-form__alert--error" role="alert" aria-live="assertive">
+            <strong>Error:</strong> {submitError}
+            <button
+              type="button"
+              className="asp-form__alert-close"
+              onClick={() => setSubmitError('')}
+              aria-label="Cerrar alerta"
+            >
+              ✕
+            </button>
+          </div>
         )}
 
-        {submitOkMessage && <p className="asp-form__result asp-form__result--ok">{submitOkMessage}</p>}
+        {submitOkMessage && (
+          <div className="asp-form__alert asp-form__alert--success" role="status" aria-live="polite">
+            <strong>Exito:</strong> {submitOkMessage}
+          </div>
+        )}
       </form>
     </section>
   )

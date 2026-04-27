@@ -15,6 +15,55 @@ function sleep(ms) {
   })
 }
 
+function sanitizeErrorMessage(msg) {
+  if (!msg || typeof msg !== 'string') return 'Ocurrio un error. Por favor intenta de nuevo.'
+
+  // Ocultar URLs
+  let clean = msg.replace(/https?:\/\/[^\s"']+/g, '[servidor]')
+  // Ocultar rutas internas /api/...
+  clean = clean.replace(/\/api\/[^\s"']+/g, '[ruta interna]')
+  // Ocultar localhost
+  clean = clean.replace(/localhost:\d+/g, '[servidor local]')
+  // Ocultar detalles JSON complejos
+  clean = clean.replace(/Path: \$\.[^|]+\|/g, '')
+  clean = clean.replace(/LineNumber: \d+/g, '')
+  clean = clean.replace(/BytePositionInLine: \d+/g, '')
+  // Limpiar espacios dobles
+  clean = clean.replace(/\s{2,}/g, ' ').trim()
+
+  return clean || 'Ocurrio un error. Por favor intenta de nuevo.'
+}
+
+function mapBackendErrorToUserMessage(error) {
+  const msg = error?.message || error?.mensaje || String(error)
+  const status = error?.status
+
+  // Mapear errores comunes del backend
+  if (msg.includes('CURP') || msg.includes('curp')) {
+    return 'Verifica tu CURP. Debe cumplir el formato correcto.'
+  }
+  if (msg.includes('validation') || msg.includes('validacion') || msg.includes('One or more validation')) {
+    return 'Hay errores en los datos ingresados. Revisa que todos los campos esten completos y sean validos.'
+  }
+  if (msg.includes('Guid') || msg.includes('guid')) {
+    return 'Selecciona un campus y carrera validos.'
+  }
+  if (msg.includes('JSON') || msg.includes('json')) {
+    return 'Hay un problema con los datos enviados. Intenta de nuevo.'
+  }
+  if (status === 400) {
+    return 'Uno o mas campos tienen datos invalidos. Revisa y vuelve a intentar.'
+  }
+  if (status === 404) {
+    return 'El recurso no fue encontrado. Intenta de nuevo.'
+  }
+  if (status === 500) {
+    return 'Error en el servidor. Por favor intenta mas tarde.'
+  }
+
+  return sanitizeErrorMessage(msg)
+}
+
 function parseResponseBody(contentType, rawText) {
   if (!rawText) return null
 
@@ -126,16 +175,18 @@ async function requestJson(path, options = {}, retryCount = 1) {
 
     if (error.name === 'AbortError') {
       const timeoutError = new Error(
-        `Tiempo de espera agotado al conectar con ${API_BASE_URL}. Verifica que el backend este encendido.`,
+        'La conexion esta tardando mucho. Intenta de nuevo en unos momentos.',
       )
       timeoutError.type = 'NETWORK_TIMEOUT'
+      timeoutError.userFriendly = true
       throw timeoutError
     }
 
     const networkError = new Error(
-      `No se pudo conectar con ${API_BASE_URL}. Inicia el backend y valida puerto/URL.`,
+      'No se pudo conectar con el servidor. Por favor intenta de nuevo.',
     )
     networkError.type = 'NETWORK_UNREACHABLE'
+    networkError.userFriendly = true
     throw networkError
   } finally {
     clearTimeout(timeoutId)
@@ -149,12 +200,12 @@ export async function apiPost(path, payload) {
   })
 
   if (!result.ok) {
-    const error = new Error(
-      result.data?.message || result.data?.mensaje || `Error HTTP ${result.status}`,
-    )
+    const rawMsg = result.data?.message || result.data?.mensaje || `Error HTTP ${result.status}`
+    const error = new Error(mapBackendErrorToUserMessage({ message: rawMsg, status: result.status }))
     error.type = 'HTTP_ERROR'
     error.status = result.status
     error.data = result.data
+    error.userFriendly = true
     throw error
   }
 
@@ -185,17 +236,17 @@ export async function consultarStatusInscripcion(folio) {
   if (result.status === 404) {
     return {
       found: false,
-      message: result.data?.message || result.data?.mensaje || 'Folio no encontrado',
+      message: 'Folio no encontrado. Verifica que este correcto.',
       status: 404,
     }
   }
 
   if (!result.ok) {
-    const error = new Error(
-      result.data?.message || result.data?.mensaje || `Error HTTP ${result.status}`,
-    )
+    const rawMsg = result.data?.message || result.data?.mensaje || `Error HTTP ${result.status}`
+    const error = new Error(mapBackendErrorToUserMessage({ message: rawMsg, status: result.status }))
     error.type = 'HTTP_ERROR'
     error.status = result.status
+    error.userFriendly = true
     throw error
   }
 
