@@ -34,7 +34,7 @@ export const FORM_DEFAULT_VALUES = {
   apellidoPaterno: '',
   apellidoMaterno: '',
   fechaNacimiento: '',
-  sexo: 'M',
+  sexo: '',
   estadoCivil: '',
   curp: '',
   telefono: '',

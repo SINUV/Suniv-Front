@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 const CANALES = [
   {
     icon: '📍',
@@ -27,15 +29,51 @@ const CANALES = [
 
 export default function ContactoPage() {
   const [form, setForm] = useState({ nombre: '', email: '', asunto: '', mensaje: '' })
+  const [errors, setErrors] = useState({})
   const [enviado, setEnviado] = useState(false)
 
   const handleChange = (e) => {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
+    setErrors((prev) => ({ ...prev, [name]: '' }))
+  }
+
+  const validateForm = () => {
+    const nextErrors = {}
+    const nombre = form.nombre.trim()
+    const email = form.email.trim()
+    const asunto = form.asunto.trim()
+    const mensaje = form.mensaje.trim()
+
+    if (!nombre) {
+      nextErrors.nombre = 'El nombre es obligatorio.'
+    }
+
+    if (!email) {
+      nextErrors.email = 'El correo es obligatorio.'
+    } else if (!EMAIL_REGEX.test(email)) {
+      nextErrors.email = 'Ingresa un correo valido.'
+    }
+
+    if (!asunto) {
+      nextErrors.asunto = 'Selecciona un asunto.'
+    }
+
+    if (!mensaje) {
+      nextErrors.mensaje = 'El mensaje no puede ir en blanco.'
+    }
+
+    setErrors(nextErrors)
+    return Object.keys(nextErrors).length === 0
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
+
+    if (!validateForm()) {
+      return
+    }
+
     // Aquí iría la llamada al API
     setEnviado(true)
   }
@@ -92,7 +130,11 @@ export default function ContactoPage() {
                 <button
                   type="button"
                   className="primary-button"
-                  onClick={() => { setEnviado(false); setForm({ nombre: '', email: '', asunto: '', mensaje: '' }) }}
+                  onClick={() => {
+                    setEnviado(false)
+                    setErrors({})
+                    setForm({ nombre: '', email: '', asunto: '', mensaje: '' })
+                  }}
                 >
                   Enviar otro mensaje
                 </button>
@@ -116,6 +158,7 @@ export default function ContactoPage() {
                       onChange={handleChange}
                       required
                     />
+                    {errors.nombre && <small>{errors.nombre}</small>}
                   </div>
                   <div className="form-group">
                     <label className="form-label" htmlFor="email">Correo electrónico</label>
@@ -129,6 +172,7 @@ export default function ContactoPage() {
                       onChange={handleChange}
                       required
                     />
+                    {errors.email && <small>{errors.email}</small>}
                   </div>
                 </div>
 
@@ -148,6 +192,7 @@ export default function ContactoPage() {
                     <option value="servicios">Servicios escolares</option>
                     <option value="otro">Otro</option>
                   </select>
+                  {errors.asunto && <small>{errors.asunto}</small>}
                 </div>
 
                 <div className="form-group">
@@ -162,6 +207,7 @@ export default function ContactoPage() {
                     onChange={handleChange}
                     required
                   />
+                  {errors.mensaje && <small>{errors.mensaje}</small>}
                 </div>
 
                 <button type="submit" className="primary-button" style={{ width: '100%' }}>

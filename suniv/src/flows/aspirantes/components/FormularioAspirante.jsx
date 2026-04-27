@@ -100,7 +100,6 @@ const SECTION_CONFIG = [
     id: 'aplicacion',
     title: 'Aplicacion y consentimiento',
     fields: [
-      'lugarAplicacion',
       'consentimiento',
     ],
   },
@@ -115,7 +114,7 @@ const FIELD_META = {
   apellidoPaterno: { label: 'Apellido paterno', required: true },
   apellidoMaterno: { label: 'Apellido materno', required: true },
   fechaNacimiento: { label: 'Fecha de nacimiento', type: 'date', required: true },
-  sexo: { label: 'Sexo', type: 'select' },
+  sexo: { label: 'Sexo', type: 'select', required: true },
   estadoCivil: { label: 'Estado civil', required: true },
   curp: { label: 'CURP', required: true, transformUppercase: true },
   telefono: { label: 'Telefono', required: true, onlyDigits: 10 },
@@ -157,7 +156,7 @@ const FIELD_META = {
   lugarAplicacion: {
     label: 'Campus donde deseas presentar evaluacion',
     type: 'select',
-    required: true,
+    required: false,
   },
   consentimiento: { label: 'Acepto el tratamiento de datos', type: 'checkbox', required: true },
 }
@@ -230,6 +229,10 @@ function getFieldRules(fieldName, getValues) {
 
           return true
         },
+      }
+    case 'sexo':
+      return {
+        required: 'Selecciona una opcion de sexo.',
       }
     case 'curp':
       return {
@@ -367,6 +370,7 @@ function SelectField({ fieldName, register, campusId, getValues }) {
   if (fieldName === 'sexo') {
     return (
       <select id={fieldName} {...register(fieldName, getFieldRules(fieldName, getValues))}>
+        <option value="">Selecciona una opcion</option>
         <option value="M">Masculino</option>
         <option value="F">Femenino</option>
         <option value="O">Prefiero no especificar</option>
