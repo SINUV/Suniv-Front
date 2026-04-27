@@ -4,19 +4,41 @@
 
 .aspirantes-flow__grid {
   display: grid;
-  grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
-  gap: 1rem;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
 }
 
 .aspirantes-panel {
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 20px;
-  padding: 1rem;
+  padding: 1.15rem;
 }
 
-.aspirantes-panel h2 {
-  margin-top: 0;
+.aspirantes-panel--form-wide {
+  width: min(100%, 1180px);
+  margin: 0 auto;
+}
+
+.aspirantes-panel--consulta-bottom {
+  width: min(100%, 860px);
+  margin: 0 auto;
+}
+
+.aspirantes-panel__title {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(1.2rem, 2.2vw, 1.55rem);
+  line-height: 1.25;
+  color: #0f172a;
+}
+
+.aspirantes-panel__lead {
+  margin: 0.45rem auto 0.9rem;
+  text-align: center;
+  max-width: 72ch;
+  line-height: 1.62;
+  color: #475569;
 }
 
 .aspirantes-panel p {
@@ -27,7 +49,8 @@
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 0.6rem;
-  margin: 0.75rem 0;
+  margin: 0.75rem auto;
+  max-width: 760px;
 }
 
 .folio-input {
@@ -44,10 +67,12 @@
   color: #1e3a8a !important;
   font-weight: 700;
   padding: 0.45rem 0.6rem;
+  text-align: center;
 }
 
 .aspirantes-panel__hint {
   margin: 0.2rem 0;
+  text-align: center;
 }
 
 .aspirantes-panel__error {
@@ -57,10 +82,12 @@
   background: #fee2e2;
   color: #991b1b !important;
   font-weight: 600;
+  text-align: center;
 }
 
 .aspirantes-panel__api-note {
   margin-top: 0.9rem;
+  text-align: center;
 }
 
 .aspirantes-panel__mode-switch {

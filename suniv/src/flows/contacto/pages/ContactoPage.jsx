@@ -4,7 +4,7 @@ const CANALES = [
   {
     icon: '📍',
     titulo: 'Dirección',
-    detalle: 'Av. Universidad s/n, Col. Centro, Oaxaca de Juárez, Oax. C.P. 68000',
+    detalle: 'Carretera a Puerto Angel Km 34.5, Ocotlán de Morelos, Oaxaca',
   },
   {
     icon: '📞',

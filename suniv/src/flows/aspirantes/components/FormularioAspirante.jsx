@@ -94,6 +94,12 @@ const SECTION_CONFIG = [
       'municipioResponsable',
       'estadoResponsable',
       'codigoPostalResponsable',
+    ],
+  },
+  {
+    id: 'aplicacion',
+    title: 'Aplicacion y consentimiento',
+    fields: [
       'lugarAplicacion',
       'consentimiento',
     ],
@@ -148,11 +154,41 @@ const FIELD_META = {
   municipioResponsable: { label: 'Municipio responsable', required: true },
   estadoResponsable: { label: 'Estado responsable', required: true },
   codigoPostalResponsable: { label: 'Codigo postal responsable', required: true, onlyDigits: 5 },
-  lugarAplicacion: { label: 'Lugar de aplicacion', required: true },
+  lugarAplicacion: {
+    label: 'Campus donde deseas presentar evaluacion',
+    type: 'select',
+    required: true,
+  },
   consentimiento: { label: 'Acepto el tratamiento de datos', type: 'checkbox', required: true },
 }
 
-function getFieldRules(fieldName) {
+function getFechaNacimientoFromCurp(curpValue) {
+  const normalizedCurp = String(curpValue || '').toUpperCase().trim()
+  if (!CURP_REGEX.test(normalizedCurp)) return null
+
+  const yy = Number(normalizedCurp.slice(4, 6))
+  const mm = Number(normalizedCurp.slice(6, 8))
+  const dd = Number(normalizedCurp.slice(8, 10))
+
+  const now = new Date()
+  const currentTwoDigits = now.getFullYear() % 100
+  const fullYear = yy <= currentTwoDigits ? 2000 + yy : 1900 + yy
+
+  if (mm < 1 || mm > 12 || dd < 1 || dd > 31) return null
+
+  const parsedDate = new Date(fullYear, mm - 1, dd)
+  if (
+    parsedDate.getFullYear() !== fullYear ||
+    parsedDate.getMonth() !== mm - 1 ||
+    parsedDate.getDate() !== dd
+  ) {
+    return null
+  }
+
+  return `${fullYear}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`
+}
+
+function getFieldRules(fieldName, getValues) {
   const currentYear = new Date().getFullYear()
 
   switch (fieldName) {
@@ -166,10 +202,53 @@ function getFieldRules(fieldName) {
         required: 'Selecciona una carrera.',
         validate: (value) => GUID_REGEX.test(value) || 'Carrera invalida.',
       }
+    case 'fechaNacimiento':
+      return {
+        required: 'La fecha de nacimiento es obligatoria.',
+        validate: (value) => {
+          const parsedDate = new Date(value)
+          if (Number.isNaN(parsedDate.getTime())) return 'Fecha de nacimiento invalida.'
+
+          const now = new Date()
+          if (parsedDate > now) return 'La fecha de nacimiento no puede ser futura.'
+
+          let age = now.getFullYear() - parsedDate.getFullYear()
+          const hasHadBirthdayThisYear =
+            now.getMonth() > parsedDate.getMonth() ||
+            (now.getMonth() === parsedDate.getMonth() && now.getDate() >= parsedDate.getDate())
+
+          if (!hasHadBirthdayThisYear) age -= 1
+
+          if (age < 14) return 'La edad minima permitida es 14 anios.'
+          if (age > 80) return 'Verifica la edad: parece fuera del rango esperado.'
+
+          const curpValue = getValues?.('curp')
+          const curpDate = getFechaNacimientoFromCurp(curpValue)
+          if (curpDate && value !== curpDate) {
+            return 'La fecha de nacimiento no coincide con la CURP.'
+          }
+
+          return true
+        },
+      }
     case 'curp':
       return {
         required: 'La CURP es obligatoria.',
-        validate: (value) => CURP_REGEX.test(String(value || '').toUpperCase()) || 'CURP invalida.',
+        validate: (value) => {
+          const normalizedCurp = String(value || '').toUpperCase().trim()
+
+          if (!CURP_REGEX.test(normalizedCurp)) {
+            return 'CURP invalida.'
+          }
+
+          const fechaNacimiento = getValues?.('fechaNacimiento')
+          const curpDate = getFechaNacimientoFromCurp(normalizedCurp)
+          if (fechaNacimiento && curpDate && fechaNacimiento !== curpDate) {
+            return 'La CURP no coincide con la fecha de nacimiento.'
+          }
+
+          return true
+        },
       }
     case 'correo':
       return {
@@ -196,11 +275,38 @@ function getFieldRules(fieldName) {
         validate: (value) => !Number.isNaN(Number(value)) || 'Promedio invalido.',
       }
     case 'anioIngreso':
+      return {
+        required: 'Este campo es obligatorio.',
+        min: { value: 1900, message: 'Ingresa un anio valido.' },
+        max: { value: currentYear, message: `El anio no puede ser mayor a ${currentYear}.` },
+        validate: (value) => {
+          const ingreso = Number(value)
+          const egresoRaw = getValues?.('anioEgreso')
+          const egreso = Number(egresoRaw)
+
+          if (egresoRaw && !Number.isNaN(egreso) && ingreso > egreso) {
+            return 'El anio de ingreso no puede ser mayor al anio de egreso.'
+          }
+
+          return true
+        },
+      }
     case 'anioEgreso':
       return {
         required: 'Este campo es obligatorio.',
         min: { value: 1900, message: 'Ingresa un anio valido.' },
         max: { value: currentYear, message: `El anio no puede ser mayor a ${currentYear}.` },
+        validate: (value) => {
+          const egreso = Number(value)
+          const ingresoRaw = getValues?.('anioIngreso')
+          const ingreso = Number(ingresoRaw)
+
+          if (ingresoRaw && !Number.isNaN(ingreso) && egreso < ingreso) {
+            return 'El anio de egreso no puede ser menor al anio de ingreso.'
+          }
+
+          return true
+        },
       }
     case 'consentimiento':
       return {
@@ -225,10 +331,10 @@ function sanitizeInputValue(event, field) {
   }
 }
 
-function SelectField({ fieldName, register, campusId }) {
+function SelectField({ fieldName, register, campusId, getValues }) {
   if (fieldName === 'campusId') {
     return (
-      <select id={fieldName} {...register(fieldName, getFieldRules(fieldName))}>
+      <select id={fieldName} {...register(fieldName, getFieldRules(fieldName, getValues))}>
         <option value="">Selecciona una opcion</option>
         {CAMPUS_OPTIONS.map((campus) => (
           <option key={campus.id} value={campus.id}>
@@ -240,11 +346,15 @@ function SelectField({ fieldName, register, campusId }) {
   }
 
   if (fieldName === 'carreraId') {
-    const programOptions = PROGRAM_OPTIONS.filter((program) => !campusId || program.campusId === campusId)
+    const programOptions = PROGRAM_OPTIONS.filter((program) => campusId && program.campusId === campusId)
 
     return (
-      <select id={fieldName} {...register(fieldName, getFieldRules(fieldName))}>
-        <option value="">Selecciona una opcion</option>
+      <select
+        id={fieldName}
+        disabled={!campusId}
+        {...register(fieldName, getFieldRules(fieldName, getValues))}
+      >
+        <option value="">{campusId ? 'Selecciona una opcion' : 'Primero selecciona un campus'}</option>
         {programOptions.map((program) => (
           <option key={program.id} value={program.id}>
             {program.nombre}
@@ -256,7 +366,7 @@ function SelectField({ fieldName, register, campusId }) {
 
   if (fieldName === 'sexo') {
     return (
-      <select id={fieldName} {...register(fieldName, getFieldRules(fieldName))}>
+      <select id={fieldName} {...register(fieldName, getFieldRules(fieldName, getValues))}>
         <option value="M">Masculino</option>
         <option value="F">Femenino</option>
         <option value="O">Prefiero no especificar</option>
@@ -264,8 +374,21 @@ function SelectField({ fieldName, register, campusId }) {
     )
   }
 
+  if (fieldName === 'lugarAplicacion') {
+    return (
+      <select id={fieldName} {...register(fieldName, getFieldRules(fieldName, getValues))}>
+        <option value="">Selecciona un campus</option>
+        {CAMPUS_OPTIONS.map((campus) => (
+          <option key={campus.id} value={campus.nombre}>
+            {campus.nombre}
+          </option>
+        ))}
+      </select>
+    )
+  }
+
   return (
-    <select id={fieldName} {...register(fieldName, getFieldRules(fieldName))}>
+    <select id={fieldName} {...register(fieldName, getFieldRules(fieldName, getValues))}>
       {BLOOD_TYPES.map((blood) => (
         <option key={blood} value={blood}>
           {blood}
@@ -311,6 +434,7 @@ export default function FormularioAspirante({
     control,
     trigger,
     setValue,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm({ defaultValues })
 
@@ -320,6 +444,8 @@ export default function FormularioAspirante({
 
   const campusId = useWatch({ control, name: 'campusId' })
   const selectedCareer = useWatch({ control, name: 'carreraId' })
+  const watchedCurp = useWatch({ control, name: 'curp' })
+  const watchedFechaNacimiento = useWatch({ control, name: 'fechaNacimiento' })
 
   useEffect(() => {
     reset(defaultValues)
@@ -337,7 +463,17 @@ export default function FormularioAspirante({
     if (!isCareerValid) {
       setValue('carreraId', '')
     }
+
+    const campusSeleccionado = CAMPUS_OPTIONS.find((c) => c.id === campusId)
+    if (campusSeleccionado) {
+      setValue('lugarAplicacion', campusSeleccionado.nombre, { shouldValidate: false })
+    }
   }, [campusId, selectedCareer, setValue])
+
+  useEffect(() => {
+    if (!watchedCurp && !watchedFechaNacimiento) return
+    trigger(['curp', 'fechaNacimiento'])
+  }, [watchedCurp, watchedFechaNacimiento, trigger])
 
   const onSubmit = handleSubmit(async (values) => {
     setSubmitError('')
@@ -420,7 +556,7 @@ export default function FormularioAspirante({
                 if (field.type === 'checkbox') {
                   return (
                     <label key={fieldName} className="asp-form__checkbox">
-                      <input type="checkbox" {...register(fieldName, getFieldRules(fieldName))} />
+                      <input type="checkbox" {...register(fieldName, getFieldRules(fieldName, getValues))} />
                       <span>{field.label}</span>
                       {error && <small>{error}</small>}
                     </label>
@@ -432,19 +568,27 @@ export default function FormularioAspirante({
                     <label htmlFor={fieldName}>
                       {field.label}
                       {field.required && <span> *</span>}
+                      {!field.required && <small className="asp-form__optional">opcional</small>}
                     </label>
 
                     {field.type === 'select' ? (
-                      <SelectField fieldName={fieldName} register={register} campusId={campusId} />
+                      <SelectField
+                        fieldName={fieldName}
+                        register={register}
+                        campusId={campusId}
+                        getValues={getValues}
+                      />
                     ) : (
                       <input
                         id={fieldName}
                         type={field.type || 'text'}
                         step={field.step}
-                        {...register(fieldName, getFieldRules(fieldName))}
+                        {...register(fieldName, getFieldRules(fieldName, getValues))}
                         onInput={(event) => sanitizeInputValue(event, field)}
                       />
                     )}
+
+                    {field.hint && <small className="asp-form__hint">{field.hint}</small>}
 
                     {error && <small>{error}</small>}
                   </div>
@@ -463,13 +607,13 @@ export default function FormularioAspirante({
             <legend>Validaciones de inscripcion</legend>
             <div className="asp-form__grid">
               <label className="asp-form__checkbox">
-                <input type="checkbox" {...register('aceptoReglamento', getFieldRules('aceptoReglamento'))} />
+                <input type="checkbox" {...register('aceptoReglamento', getFieldRules('aceptoReglamento', getValues))} />
                 <span>Acepto el reglamento institucional</span>
                 {errors.aceptoReglamento?.message && <small>{errors.aceptoReglamento.message}</small>}
               </label>
 
               <label className="asp-form__checkbox">
-                <input type="checkbox" {...register('autorizacionInformar', getFieldRules('autorizacionInformar'))} />
+                <input type="checkbox" {...register('autorizacionInformar', getFieldRules('autorizacionInformar', getValues))} />
                 <span>Autorizo informar avances academicos al responsable</span>
                 {errors.autorizacionInformar?.message && <small>{errors.autorizacionInformar.message}</small>}
               </label>
@@ -516,7 +660,7 @@ export default function FormularioAspirante({
                       const validIns = await trigger(['aceptoReglamento', 'autorizacionInformar'])
                       if (!validIns) return
                     }
-                    await handleSubmit()
+                    await onSubmit()
                   }
                 }}
                 disabled={isSubmitting || isLoadingInitialData}
@@ -534,25 +678,6 @@ export default function FormularioAspirante({
         )}
 
         {submitOkMessage && <p className="asp-form__result asp-form__result--ok">{submitOkMessage}</p>}
-
-        {mode === FORM_MODES.INSCRIPCION && (
-          <fieldset className="asp-form__section">
-            <legend>Validaciones de inscripcion</legend>
-            <div className="asp-form__grid">
-              <label className="asp-form__checkbox">
-                <input type="checkbox" {...register('aceptoReglamento', getFieldRules('aceptoReglamento'))} />
-                <span>Acepto el reglamento institucional</span>
-                {errors.aceptoReglamento?.message && <small>{errors.aceptoReglamento.message}</small>}
-              </label>
-
-              <label className="asp-form__checkbox">
-                <input type="checkbox" {...register('autorizacionInformar', getFieldRules('autorizacionInformar'))} />
-                <span>Autorizo informar avances academicos al responsable</span>
-                {errors.autorizacionInformar?.message && <small>{errors.autorizacionInformar.message}</small>}
-              </label>
-            </div>
-          </fieldset>
-        )}
       </form>
     </section>
   )

@@ -2165,6 +2165,94 @@
   color: color-mix(in srgb, var(--suniv-dark) 82%, var(--suniv-white));
 }
 
+.about-page .page-hero {
+  position: relative;
+  margin-top: 0.7rem;
+  padding: clamp(2.2rem, 5vw, 3rem) clamp(1rem, 3vw, 2rem);
+  border-radius: 24px;
+  background:
+    radial-gradient(120% 120% at 10% 0%, rgba(255, 214, 192, 0.35) 0%, rgba(255, 214, 192, 0) 60%),
+    linear-gradient(135deg, rgba(204, 49, 41, 0.1) 0%, rgba(240, 111, 74, 0.07) 55%, rgba(255, 214, 192, 0.2) 100%);
+  border: 1px solid rgba(230, 57, 48, 0.16);
+}
+
+.about-page .page-hero__copy {
+  max-width: 840px;
+}
+
+.about-gradient-key {
+  background: linear-gradient(115deg, #e63930 0%, #f06f4a 52%, #ffd6c0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.about-kicker {
+  margin: 0 0 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #c44536;
+  text-align: center;
+}
+
+.about-section-title {
+  margin-bottom: 1.4rem;
+}
+
+.about-page .content-section--alt {
+  background:
+    linear-gradient(180deg, rgba(255, 214, 192, 0.18) 0%, rgba(255, 255, 255, 0.72) 100%);
+}
+
+.about-page .mv-grid {
+  max-width: 1080px;
+  gap: 1.25rem;
+}
+
+.about-page .mv-card {
+  border: 1px solid rgba(230, 57, 48, 0.16);
+  box-shadow: 0 16px 34px -24px rgba(196, 69, 54, 0.34);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.about-page .mv-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(230, 57, 48, 0.28);
+  box-shadow: 0 22px 40px -28px rgba(196, 69, 54, 0.42);
+}
+
+.about-page .mv-card__title {
+  color: #b8322b;
+}
+
+.about-list {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.45rem;
+  color: color-mix(in srgb, var(--suniv-dark) 82%, var(--suniv-white));
+  font-size: 0.98rem;
+  line-height: 1.58;
+}
+
+.about-list li::marker {
+  color: #e63930;
+}
+
+.about-note {
+  margin: 0.9rem 0 0;
+  padding: 0.72rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid rgba(230, 57, 48, 0.18);
+  background: rgba(255, 214, 192, 0.28);
+  color: #8f2d26;
+  font-size: 0.93rem;
+  font-weight: 650;
+}
+
 /* ─── Sobre Nosotros: valores ─────────────────────────── */
 .valores-grid {
   display: grid;

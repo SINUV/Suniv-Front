@@ -61,6 +61,14 @@
   color: #1f2937;
 }
 
+.asp-form__optional {
+  margin-left: 0.45rem;
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: #64748b;
+  text-transform: lowercase;
+}
+
 .asp-form__field input,
 .asp-form__field select {
   min-height: 42px;
@@ -68,6 +76,18 @@
   border: 1px solid #cbd5e1;
   padding: 0.55rem 0.7rem;
   font-size: 0.95rem;
+}
+
+.asp-form__field select:disabled {
+  background: #f8fafc;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.asp-form__hint {
+  color: #64748b;
+  font-size: 0.78rem;
+  line-height: 1.4;
 }
 
 .asp-form__field small,
