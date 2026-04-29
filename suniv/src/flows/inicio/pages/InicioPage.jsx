@@ -86,7 +86,7 @@ export default function InicioPage() {
           </p>
           <div className="hero-actions">
             <Link to="/aspirantes" className="primary-button">
-              Iniciar admision
+              Obtener Ficha 
             </Link>
           </div>
         </div>
