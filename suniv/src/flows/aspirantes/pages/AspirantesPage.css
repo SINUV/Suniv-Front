@@ -16,8 +16,12 @@
 }
 
 .aspirantes-panel--form-wide {
-  width: min(100%, 1180px);
+  width: min(100%, 1280px);
   margin: 0 auto;
+}
+
+.aspirantes-panel--form {
+  padding: 1.35rem;
 }
 
 .aspirantes-panel--consulta-bottom {
@@ -131,7 +135,17 @@
     grid-template-columns: 1fr;
   }
 
+  .aspirantes-panel--form-wide {
+    width: min(100%, 1080px);
+  }
+
   .aspirantes-panel__inline {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .aspirantes-panel--form {
+    padding: 1rem;
   }
 }

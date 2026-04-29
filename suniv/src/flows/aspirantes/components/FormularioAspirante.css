@@ -1,281 +1,392 @@
-/* ============================================================================
-   FORMULARIO DE ASPIRANTES - ESTILOS VISUALES
-   Paleta de colores:
-   - Primary: #e63930 (rojo coral)
-   - Secondary: #f96e41 (naranja cálido)
-   - Accent: #ffa057 (naranja claro)
-   - Dark: #323322 (verde oscuro)
-   - White: #ffffff
-   ========================================================================== */
-
-.asp-form {
-  background: var(--suniv-white, #ffffff);
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 1.5rem;
-  box-shadow: 0 24px 44px -38px rgba(0, 0, 0, 0.45);
-  max-width: 100%;
+:root {
+  --suniv-primary: #e63930;
+  --suniv-secondary: #f96e41;
+  --suniv-accent: #ffa057;
+  --suniv-dark: #323322;
+  --suniv-black: #000000;
+  --suniv-white: #ffffff;
+  --suniv-ink-soft: #546076;
+  --suniv-line: #dce2ea;
+  --suniv-surface: #f7f9fc;
 }
 
-/* ============================================================================
-   ENCABEZADO DEL FORMULARIO
-   ========================================================================== */
+.asp-form {
+  background:
+    radial-gradient(130% 70% at 100% 0%, rgba(255, 160, 87, 0.14), transparent 52%),
+    radial-gradient(120% 90% at 0% 0%, rgba(230, 57, 48, 0.08), transparent 48%),
+    var(--suniv-white, #ffffff);
+  border: 1px solid var(--suniv-line);
+  border-radius: 24px;
+  padding: 1.85rem;
+  box-shadow: 0 28px 44px -42px rgba(0, 0, 0, 0.58);
+  max-width: 100%;
+}
 
 .asp-form__header {
   margin-bottom: 1.5rem;
 }
 
 .asp-form__header .eyebrow {
-  margin: 0 0 0.5rem 0;
-  font-size: 0.8rem;
-  font-weight: 700;
+  margin: 0 0 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   color: var(--suniv-primary, #e63930);
 }
 
 .asp-form__header h2 {
-  margin: 0.25rem 0 0.5rem 0;
-  font-size: 1.75rem;
-  font-weight: 700;
+  margin: 0.2rem 0 0.55rem;
+  font-size: clamp(1.5rem, 2.1vw, 1.95rem);
+  font-weight: 800;
+  line-height: 1.2;
   color: var(--suniv-dark, #323322);
 }
 
 .asp-form__header p {
   margin: 0.35rem 0;
-  font-size: 0.95rem;
-  color: #475569;
-  line-height: 1.5;
+  font-size: 0.96rem;
+  color: var(--suniv-ink-soft);
+  line-height: 1.6;
 }
 
 .asp-form__folio {
-  margin-top: 0.75rem !important;
+  margin-top: 0.8rem !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   font-weight: 700;
   color: var(--suniv-primary, #e63930) !important;
-  font-size: 0.95rem;
+  background: rgba(230, 57, 48, 0.08);
+  border: 1px solid rgba(230, 57, 48, 0.2);
+  border-radius: 999px;
+  padding: 0.22rem 0.75rem;
 }
 
 .asp-form__loading {
   margin: 1rem 0;
   padding: 0.75rem 1rem;
-  border-radius: 10px;
-  background: #dbeafe;
-  color: #1e40af;
-  font-weight: 600;
+  border-radius: 11px;
+  background: #fff2e8;
+  color: #9a3412;
+  font-weight: 700;
   font-size: 0.9rem;
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid var(--suniv-secondary, #f96e41);
 }
 
-/* ============================================================================
-   STEPPER / WIZARD
-   ========================================================================== */
-
 .asp-form__stepper {
-  display: flex;
-  gap: 0.6rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin-bottom: 1.2rem;
+}
+
+.asp-form__progress {
+  grid-column: 1 / -1;
+  position: relative;
+  margin-bottom: 0.35rem;
+}
+
+.asp-form__progress-track,
+.asp-form__progress-value {
+  display: block;
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+}
+
+.asp-form__progress-track {
+  background: #eceff4;
+}
+
+.asp-form__progress-value {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  background: linear-gradient(
+    90deg,
+    var(--suniv-primary, #e63930),
+    var(--suniv-secondary, #f96e41),
+    var(--suniv-accent, #ffa057)
+  );
+  transition: width 280ms ease;
+}
+
+.asp-form__progress-text {
+  display: block;
+  margin-top: 0.4rem;
+  color: #6b7280;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .asp-form__stepper-item {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.5rem 0.9rem;
-  border-radius: 12px;
-  background: #f8fafc;
-  border: 1.5px solid #cbd5e1;
+  gap: 0.65rem;
+  min-height: 68px;
+  padding: 0.62rem 0.76rem;
+  border-radius: 14px;
+  background: var(--suniv-white, #ffffff);
+  border: 1px solid #dde4ec;
   cursor: pointer;
-  font-weight: 600;
+  text-align: left;
   color: #475569;
-  font-size: 0.9rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 
 .asp-form__stepper-item:hover {
-  border-color: #94a3b8;
-  background: #f1f5f9;
-}
-
-.asp-form__stepper-item.is-active {
-  background: linear-gradient(
-    90deg,
-    var(--suniv-primary, #e63930) 0%,
-    var(--suniv-secondary, #f96e41) 100%
-  );
-  color: var(--suniv-white, #ffffff);
-  border-color: transparent;
-  box-shadow: 0 4px 12px rgba(230, 57, 48, 0.25);
+  border-color: #bdc6d3;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px -14px rgba(0, 0, 0, 0.36);
 }
 
 .asp-form__stepper-item .step-index {
   display: inline-flex;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
   align-items: center;
   justify-content: center;
-  background: rgba(50, 51, 34, 0.08);
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #475569;
-  transition: all 0.3s ease;
+  background: #ecf0f4;
+  border: 1px solid #d4dde7;
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: #64748b;
 }
 
-.asp-form__stepper-item.is-active .step-index {
-  background: rgba(255, 255, 255, 0.25);
-  color: var(--suniv-white, #ffffff);
+.asp-form__stepper-item .step-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff3ef;
+  color: var(--suniv-primary, #e63930);
+  border: 1px solid rgba(230, 57, 48, 0.17);
+  flex-shrink: 0;
+}
+
+.asp-form__stepper-item .step-icon svg {
+  width: 17px;
+  height: 17px;
+  fill: currentColor;
+}
+
+.asp-form__stepper-item .step-meta {
+  display: grid;
+  gap: 0.1rem;
 }
 
 .asp-form__stepper-item .step-title {
   font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--suniv-dark, #323322);
 }
 
-/* ============================================================================
-   CUERPO DEL FORMULARIO
-   ========================================================================== */
+.asp-form__stepper-item .step-state {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #7a8699;
+}
+
+.asp-form__stepper-item.is-complete {
+  background: #fff8f4;
+  border-color: rgba(249, 110, 65, 0.42);
+}
+
+.asp-form__stepper-item.is-complete .step-index {
+  background: rgba(249, 110, 65, 0.13);
+  border-color: rgba(249, 110, 65, 0.28);
+  color: #c24316;
+}
+
+.asp-form__stepper-item.is-complete .step-state {
+  color: #b45309;
+}
+
+.asp-form__stepper-item.is-active {
+  background: linear-gradient(
+    120deg,
+    rgba(230, 57, 48, 0.97),
+    rgba(249, 110, 65, 0.96),
+    rgba(255, 160, 87, 0.95)
+  );
+  border-color: transparent;
+  box-shadow: 0 10px 20px -14px rgba(230, 57, 48, 0.7);
+}
+
+.asp-form__stepper-item.is-active .step-title,
+.asp-form__stepper-item.is-active .step-state,
+.asp-form__stepper-item.is-active .step-index {
+  color: var(--suniv-white, #ffffff);
+}
+
+.asp-form__stepper-item.is-active .step-index {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+.asp-form__stepper-item.is-active .step-icon {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: var(--suniv-white, #ffffff);
+}
 
 .asp-form__body {
   display: grid;
-  gap: 1.5rem;
-  margin-top: 1.5rem;
+  gap: 1.45rem;
+  margin-top: 1.15rem;
 }
 
 .asp-form__section {
-  border: 1.5px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 1.25rem;
-  background: #ffffff;
-  transition: all 0.2s ease;
+  border: 1px solid #e6eaf1;
+  border-radius: 18px;
+  padding: 1.35rem;
+  background: linear-gradient(180deg, #fff 0%, #fdfefe 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.66);
 }
 
 .asp-form__section:focus-within {
-  border-color: var(--suniv-primary, #e63930);
-  box-shadow: 0 0 0 3px rgba(230, 57, 48, 0.08);
+  border-color: rgba(230, 57, 48, 0.45);
+  box-shadow:
+    0 0 0 3px rgba(230, 57, 48, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.78);
 }
 
 .asp-form__section legend {
   font-size: 1.1rem;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--suniv-dark, #323322);
   padding: 0 0.5rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.asp-form__section-help {
+  margin: 0 0 1rem;
+  font-size: 0.86rem;
+  color: #667085;
+  line-height: 1.5;
 }
 
 .asp-form__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.25rem;
+  gap: 1.05rem 1.15rem;
 }
-
-/* ============================================================================
-   CAMPOS INDIVIDUALES
-   ========================================================================== */
 
 .asp-form__field {
   display: grid;
-  gap: 0.4rem;
+  gap: 0.42rem;
 }
 
 .asp-form__field label {
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.89rem;
+  font-weight: 700;
   color: #1f2937;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.35rem;
 }
 
 .asp-form__field label span {
   color: var(--suniv-primary, #e63930);
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .asp-form__optional {
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: 0.72rem;
+  font-weight: 700;
   color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-left: 0.25rem;
+  letter-spacing: 0.08em;
 }
 
-/* Inputs y Selects */
 .asp-form__field input,
 .asp-form__field select {
-  min-height: 44px;
-  border-radius: 10px;
-  border: 1.5px solid #cbd5e1;
-  padding: 0.65rem 0.85rem;
+  min-height: 46px;
+  border-radius: 12px;
+  border: 1.3px solid #d3dae4;
+  padding: 0.68rem 0.88rem;
   font-size: 0.95rem;
   font-family: inherit;
   color: #1f2937;
-  background: var(--suniv-white, #ffffff);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #ffffff;
+  transition: border-color 170ms ease, box-shadow 170ms ease, background 170ms ease;
 }
 
-.asp-form__field input::placeholder {
-  color: #9ca3af;
+.asp-form__field input:hover,
+.asp-form__field select:hover {
+  border-color: #b6c1d0;
 }
 
 .asp-form__field input:focus,
 .asp-form__field select:focus {
   outline: none;
   border-color: var(--suniv-primary, #e63930);
-  box-shadow: 0 0 0 3px rgba(230, 57, 48, 0.1);
-}
-
-.asp-form__field input:hover,
-.asp-form__field select:hover {
-  border-color: #94a3b8;
-}
-
-.asp-form__field input[type='date'],
-.asp-form__field input[type='email'],
-.asp-form__field input[type='number'],
-.asp-form__field input[type='tel'] {
-  color: #1f2937;
+  box-shadow: 0 0 0 3px rgba(230, 57, 48, 0.11);
 }
 
 .asp-form__field select {
   cursor: pointer;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23334155' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
   background-repeat: no-repeat;
-  background-position: right 0.5rem center;
-  background-size: 1.5em 1.5em;
-  padding-right: 2.5rem;
+  background-position: right 0.7rem center;
+  background-size: 1.3em 1.3em;
+  padding-right: 2.4rem;
 }
 
-.asp-form__field select:disabled {
-  background: #f8fafc;
+.asp-form__field select:disabled,
+.asp-form__field input:disabled {
+  background: #f4f6f9;
   color: #9ca3af;
   cursor: not-allowed;
-  border-color: #e5e7eb;
+  border-color: #e1e5ec;
 }
 
-/* Hint y errores */
+.asp-form__field input.is-error,
+.asp-form__field select.is-error,
+.asp-form__field input[aria-invalid='true'],
+.asp-form__field select[aria-invalid='true'],
+.asp-form__field.is-error input,
+.asp-form__field.is-error select {
+  border-color: #d92d20;
+  background: #fff7f7;
+  box-shadow: 0 0 0 2px rgba(217, 45, 32, 0.08);
+}
+
+.asp-form__field input.is-valid,
+.asp-form__field select.is-valid,
+.asp-form__field.is-valid input,
+.asp-form__field.is-valid select {
+  border-color: rgba(249, 110, 65, 0.66);
+  background: #fff9f6;
+}
+
 .asp-form__hint {
   display: block;
-  color: #64748b;
-  font-size: 0.8rem;
-  line-height: 1.4;
-  margin-top: 0.25rem;
+  color: #667085;
+  font-size: 0.79rem;
+  line-height: 1.35;
+  margin-top: 0.2rem;
 }
 
 .asp-form__field small,
 .asp-form__checkbox small {
   display: block;
-  color: #b91c1c;
-  font-size: 0.85rem;
-  font-weight: 500;
-  margin-top: 0.35rem;
-  line-height: 1.3;
+  color: #b42318;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  line-height: 1.35;
 }
-
-/* ============================================================================
-   CHECKBOXES
-   ========================================================================== */
 
 .asp-form__checkbox {
   grid-column: 1 / -1;
@@ -283,206 +394,164 @@
   grid-template-columns: auto 1fr;
   gap: 0.6rem;
   align-items: flex-start;
-  padding: 0.75rem;
-  border-radius: 10px;
-  border: 1.5px solid #e5e7eb;
-  background: #f8fafc;
+  padding: 0.82rem 0.88rem;
+  border-radius: 12px;
+  border: 1px solid #e1e6ee;
+  background: #f9fbfd;
   cursor: pointer;
-  transition: all 0.2s ease;
-  color: #1f2937;
-  font-size: 0.95rem;
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+  color: #27303e;
+  font-size: 0.94rem;
 }
 
 .asp-form__checkbox:hover {
-  border-color: #cbd5e1;
-  background: #f1f5f9;
+  border-color: #c8d2de;
+  background: #f4f8fb;
+}
+
+.asp-form__checkbox.is-checked {
+  border-color: rgba(249, 110, 65, 0.45);
+  background: #fff8f3;
+}
+
+.asp-form__checkbox.is-error {
+  border-color: #f04438;
+  background: #fff6f6;
 }
 
 .asp-form__checkbox input[type='checkbox'] {
   width: 20px;
   height: 20px;
-  margin-top: 0.2rem;
+  margin-top: 0.12rem;
   min-height: auto;
   border-radius: 6px;
-  border: 1.5px solid #cbd5e1;
-  cursor: pointer;
+  border: 1.5px solid #bec9d7;
   accent-color: var(--suniv-primary, #e63930);
-  transition: all 0.2s ease;
-}
-
-.asp-form__checkbox input[type='checkbox']:hover {
-  border-color: var(--suniv-primary, #e63930);
+  cursor: pointer;
 }
 
 .asp-form__checkbox input[type='checkbox']:focus {
   outline: none;
-  border-color: var(--suniv-primary, #e63930);
-  box-shadow: 0 0 0 3px rgba(230, 57, 48, 0.1);
-}
-
-.asp-form__checkbox input[type='checkbox']:checked {
-  background: var(--suniv-primary, #e63930);
-  border-color: var(--suniv-primary, #e63930);
+  box-shadow: 0 0 0 3px rgba(230, 57, 48, 0.12);
 }
 
 .asp-form__checkbox span {
-  padding-top: 0.2rem;
-  line-height: 1.4;
+  padding-top: 0.05rem;
+  line-height: 1.45;
 }
 
 .asp-form__checkbox small {
   grid-column: 2 / 3;
-  margin: 0.35rem 0 0 0;
+  margin: 0.25rem 0 0;
 }
-
-/* ============================================================================
-   BOTONES Y ACCIONES
-   ========================================================================== */
 
 .asp-form__actions {
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
-  margin-top: 1.5rem;
+  margin-top: 1.4rem;
 }
 
 .asp-form__actions--wizard {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 }
 
 .primary-button,
 .secondary-button {
-  padding: 0.65rem 1.5rem;
-  border-radius: 10px;
-  border: 1.5px solid transparent;
-  font-size: 0.95rem;
-  font-weight: 600;
+  min-height: 44px;
+  padding: 0.66rem 1.58rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  font-size: 0.94rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  letter-spacing: 0.3px;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, border-color 160ms ease;
+  letter-spacing: 0.01em;
 }
 
 .primary-button {
   background: linear-gradient(
-    90deg,
+    100deg,
     var(--suniv-primary, #e63930) 0%,
-    var(--suniv-secondary, #f96e41) 100%
+    var(--suniv-secondary, #f96e41) 60%,
+    var(--suniv-accent, #ffa057) 100%
   );
   color: var(--suniv-white, #ffffff);
-  border-color: transparent;
 }
 
 .primary-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(230, 57, 48, 0.3);
-}
-
-.primary-button:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 4px 8px rgba(230, 57, 48, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 22px -14px rgba(230, 57, 48, 0.68);
 }
 
 .primary-button:disabled {
-  opacity: 0.6;
+  opacity: 0.62;
   cursor: not-allowed;
 }
 
 .secondary-button {
-  background: #f1f5f9;
-  color: #1f2937;
-  border-color: #cbd5e1;
+  background: #f3f6fa;
+  color: #27303e;
+  border-color: #d2dae4;
 }
 
 .secondary-button:hover:not(:disabled) {
-  background: #e2e8f0;
-  border-color: #94a3b8;
-  transform: translateY(-2px);
-}
-
-.secondary-button:active:not(:disabled) {
-  transform: translateY(0);
+  background: #ecf1f7;
+  border-color: #b7c2d2;
+  transform: translateY(-1px);
 }
 
 .secondary-button:disabled {
-  opacity: 0.6;
+  opacity: 0.62;
   cursor: not-allowed;
-  background: #f8fafc;
-  color: #9ca3af;
 }
 
-/* ============================================================================
-   ALERTAS (ERRORES Y ÉXITO)
-   ========================================================================== */
-
 .asp-form__alert {
-  margin: 1.25rem 0;
+  margin: 0.8rem 0 0;
   border-radius: 12px;
-  padding: 1rem 1.25rem;
+  padding: 0.95rem 1.1rem;
   font-weight: 600;
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 0.75rem;
   border-left: 4px solid;
-  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideDown 220ms ease;
 }
 
-.asp-form__alert strong {
-  grid-column: 1 / 2;
-  display: block;
-  font-size: 1rem;
+.asp-form__alert--error {
+  background: #fff0ef;
+  color: #8f1e17;
+  border-left-color: var(--suniv-primary, #e63930);
+}
+
+.asp-form__alert--success {
+  background: #fff7f2;
+  color: #8a2f05;
+  border-left-color: var(--suniv-secondary, #f96e41);
 }
 
 .asp-form__alert-close {
-  grid-column: 2 / 3;
-  grid-row: 1 / 3;
   background: none;
   border: none;
   color: inherit;
-  font-size: 1.4rem;
+  font-size: 1.32rem;
+  line-height: 1;
   cursor: pointer;
   padding: 0;
-  line-height: 1;
-  opacity: 0.7;
-  transition: opacity 0.2s;
-  display: flex;
-  align-items: center;
+  opacity: 0.8;
 }
 
 .asp-form__alert-close:hover {
   opacity: 1;
 }
 
-.asp-form__alert--error {
-  background: #fee2e2;
-  color: #7f1d1d;
-  border-left-color: #dc2626;
-}
-
-.asp-form__alert--error strong {
-  color: #b91c1c;
-}
-
-.asp-form__alert--success {
-  background: #f0fdf4;
-  color: #15803d;
-  border-left-color: #22c55e;
-}
-
-.asp-form__alert--success strong {
-  color: #22c55e;
-}
-
-/* ============================================================================
-   ANIMACIONES
-   ========================================================================== */
-
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-6px);
   }
   to {
     opacity: 1;
@@ -490,26 +559,21 @@
   }
 }
 
-/* ============================================================================
-   RESPONSIVE
-   ========================================================================== */
+@media (max-width: 980px) {
+  .asp-form__stepper {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
 
 @media (max-width: 860px) {
   .asp-form {
-    padding: 1.25rem;
-  }
-
-  .asp-form__header h2 {
-    font-size: 1.5rem;
+    padding: 1.3rem;
+    border-radius: 18px;
   }
 
   .asp-form__grid {
     grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .asp-form__section {
-    padding: 1rem;
+    gap: 0.95rem;
   }
 
   .asp-form__actions--wizard {
@@ -524,101 +588,25 @@
 
 @media (max-width: 640px) {
   .asp-form {
-    border-radius: 16px;
     padding: 1rem;
   }
 
   .asp-form__header h2 {
-    font-size: 1.35rem;
-  }
-
-  .asp-form__header p {
-    font-size: 0.9rem;
+    font-size: 1.3rem;
   }
 
   .asp-form__stepper {
-    gap: 0.4rem;
-    margin-bottom: 1.25rem;
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
   }
 
   .asp-form__stepper-item {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.8rem;
-  }
-
-  .asp-form__stepper-item .step-index {
-    width: 28px;
-    height: 28px;
-    font-size: 0.75rem;
+    min-height: 62px;
+    padding: 0.58rem 0.66rem;
   }
 
   .asp-form__section {
-    border-radius: 12px;
-    padding: 0.9rem;
-    margin-bottom: 0.75rem;
+    padding: 1rem 0.9rem;
+    border-radius: 14px;
   }
-
-  .asp-form__section legend {
-    font-size: 0.95rem;
-    margin-bottom: 0.6rem;
-  }
-
-  .asp-form__grid {
-    gap: 0.9rem;
-  }
-
-  .asp-form__field label {
-    font-size: 0.85rem;
-  }
-
-  .asp-form__field input,
-  .asp-form__field select {
-    min-height: 40px;
-    padding: 0.55rem 0.7rem;
-    font-size: 0.9rem;
-  }
-
-  .asp-form__checkbox {
-    padding: 0.65rem;
-    gap: 0.5rem;
-  }
-
-  .primary-button,
-  .secondary-button {
-    padding: 0.6rem 1.25rem;
-    font-size: 0.9rem;
-  }
-
-  .asp-form__alert {
-    padding: 0.85rem 1rem;
-    gap: 0.5rem;
-    margin: 1rem 0;
-  }
-
-  .asp-form__alert strong {
-    font-size: 0.95rem;
-  }
-
-  .asp-form__alert-close {
-    font-size: 1.25rem;
-  }
-}
-
-/* ============================================================================
-   ESTADOS ESPECIALES
-   ========================================================================== */
-
-input:invalid:not(:placeholder-shown) {
-  border-color: #dc2626;
-}
-
-input:valid:not(:placeholder-shown) {
-  border-color: #22c55e;
-}
-
-input:disabled,
-select:disabled {
-  background-color: #f3f4f6;
-  cursor: not-allowed;
-  opacity: 0.7;
 }

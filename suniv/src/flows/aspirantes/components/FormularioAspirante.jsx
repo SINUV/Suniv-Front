@@ -45,6 +45,7 @@ const SECTION_CONFIG = [
   {
     id: 'persona',
     title: 'Persona',
+    description: 'Datos personales y de identidad.',
     fields: [
       'campusId',
       'carreraId',
@@ -60,16 +61,19 @@ const SECTION_CONFIG = [
   {
     id: 'contacto',
     title: 'Contacto',
+    description: 'Medios de contacto y domicilio.',
     fields: ['telefono', 'correo', 'calle', 'numExt', 'numInt', 'colonia', 'municipio', 'estado', 'codigoPostal'],
   },
   {
     id: 'escolar',
     title: 'Escolar',
+    description: 'Trayectoria academica previa.',
     fields: ['nombreEscuela', 'tipoEscuela', 'areaConocimiento', 'anioIngreso', 'anioEgreso', 'promedioFinal', 'medioEnterado'],
   },
   {
     id: 'salud',
     title: 'Salud',
+    description: 'Informacion medica relevante.',
     fields: [
       'tipoSangre',
       'enfermedades',
@@ -87,6 +91,7 @@ const SECTION_CONFIG = [
   {
     id: 'responsable',
     title: 'Responsable',
+    description: 'Datos de contacto del responsable.',
     fields: [
       'nombreResponsable',
       'parentesco',
@@ -102,11 +107,57 @@ const SECTION_CONFIG = [
   {
     id: 'aplicacion',
     title: 'Aplicacion y consentimiento',
+    description: 'Confirmacion final del proceso.',
     fields: [
       'consentimiento',
     ],
   },
 ]
+
+const STEP_VISUALS = {
+  persona: {
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 12.75a5.25 5.25 0 1 0 0-10.5 5.25 5.25 0 0 0 0 10.5Zm0 2.25c-4.55 0-8.25 2.6-8.25 5.8 0 .52.42.95.95.95h14.6a.95.95 0 0 0 .95-.95c0-3.2-3.7-5.8-8.25-5.8Z" />
+      </svg>
+    ),
+  },
+  contacto: {
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M4.5 4.5h15A1.5 1.5 0 0 1 21 6v12a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18V6a1.5 1.5 0 0 1 1.5-1.5Zm.7 2.2 6.8 5.48 6.8-5.48H5.2Zm14.3 10.6V8.7l-7 5.64a.75.75 0 0 1-.94 0l-7-5.64v8.6h14.9Z" />
+      </svg>
+    ),
+  },
+  escolar: {
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 3.6 2.7 8.25 12 12.9l7.2-3.6v5.14h1.5V8.25L12 3.6Zm-6.75 7.92v3.98c0 1.56 2.95 2.9 6.75 2.9s6.75-1.34 6.75-2.9v-3.98L12 14.9l-6.75-3.38Z" />
+      </svg>
+    ),
+  },
+  salud: {
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M9.5 4.5h5a1 1 0 0 1 1 1V8h2.5a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H15.5v2.5a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1V15H6a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h2.5V5.5a1 1 0 0 1 1-1Zm.5 5H6.5v4H10v3.5h4V13.5h3.5v-4H14V6h-4v3.5Z" />
+      </svg>
+    ),
+  },
+  responsable: {
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M8.25 11.25a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Zm7.5 1.5a2.75 2.75 0 1 0 0-5.5 2.75 2.75 0 0 0 0 5.5ZM3.75 20.25c0-2.85 2.92-5.25 6.5-5.25s6.5 2.4 6.5 5.25c0 .41-.34.75-.75.75H4.5a.75.75 0 0 1-.75-.75Zm13.5.75a.75.75 0 0 1-.75-.75c0-1.55-.62-2.95-1.65-4.03 2.71.14 4.9 2 4.9 4.03a.75.75 0 0 1-.75.75h-1.75Z" />
+      </svg>
+    ),
+  },
+  aplicacion: {
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M6 3.75A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25h12A2.25 2.25 0 0 0 20.25 18V9.44a2.25 2.25 0 0 0-.66-1.59L16.4 4.66A2.25 2.25 0 0 0 14.81 4H6Zm0 1.5h8v3.5h3.5V18a.75.75 0 0 1-.75.75H6A.75.75 0 0 1 5.25 18V6A.75.75 0 0 1 6 5.25Zm7.93.31 2.01 2.01h-2.01V5.56Zm-1.5 5.44a.75.75 0 0 1 .75.75V13h1.25a.75.75 0 0 1 0 1.5h-1.25v1.25a.75.75 0 0 1-1.5 0V14.5H10.5a.75.75 0 0 1 0-1.5h1.18v-1.25a.75.75 0 0 1 .75-.75Z" />
+      </svg>
+    ),
+  },
+}
 
 const BLOOD_TYPES = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
 
@@ -500,10 +551,15 @@ function sanitizeInputValue(event, field, fieldName) {
   }
 }
 
-function SelectField({ fieldName, register, campusId, getValues }) {
+function SelectField({ fieldName, register, campusId, getValues, inputClassName, ariaInvalid }) {
   if (fieldName === 'campusId') {
     return (
-      <select id={fieldName} {...register(fieldName, getFieldRules(fieldName, getValues))}>
+      <select
+        id={fieldName}
+        className={inputClassName}
+        aria-invalid={ariaInvalid}
+        {...register(fieldName, getFieldRules(fieldName, getValues))}
+      >
         <option value="">Selecciona una opcion</option>
         {CAMPUS_OPTIONS.map((campus) => (
           <option key={campus.id} value={campus.id}>
@@ -520,6 +576,8 @@ function SelectField({ fieldName, register, campusId, getValues }) {
     return (
       <select
         id={fieldName}
+        className={inputClassName}
+        aria-invalid={ariaInvalid}
         disabled={!campusId}
         {...register(fieldName, getFieldRules(fieldName, getValues))}
       >
@@ -535,7 +593,12 @@ function SelectField({ fieldName, register, campusId, getValues }) {
 
   if (fieldName === 'sexo') {
     return (
-      <select id={fieldName} {...register(fieldName, getFieldRules(fieldName, getValues))}>
+      <select
+        id={fieldName}
+        className={inputClassName}
+        aria-invalid={ariaInvalid}
+        {...register(fieldName, getFieldRules(fieldName, getValues))}
+      >
         <option value="">Selecciona una opcion</option>
         <option value="M">Masculino</option>
         <option value="F">Femenino</option>
@@ -546,7 +609,12 @@ function SelectField({ fieldName, register, campusId, getValues }) {
 
   if (fieldName === 'tipoEscuela') {
     return (
-      <select id={fieldName} {...register(fieldName, getFieldRules(fieldName, getValues))}>
+      <select
+        id={fieldName}
+        className={inputClassName}
+        aria-invalid={ariaInvalid}
+        {...register(fieldName, getFieldRules(fieldName, getValues))}
+      >
         <option value="">Selecciona una opcion</option>
         <option value="Publica">Publica</option>
         <option value="Privada">Privada</option>
@@ -556,7 +624,12 @@ function SelectField({ fieldName, register, campusId, getValues }) {
 
   if (fieldName === 'lugarAplicacion') {
     return (
-      <select id={fieldName} {...register(fieldName, getFieldRules(fieldName, getValues))}>
+      <select
+        id={fieldName}
+        className={inputClassName}
+        aria-invalid={ariaInvalid}
+        {...register(fieldName, getFieldRules(fieldName, getValues))}
+      >
         <option value="">Selecciona un campus</option>
         {CAMPUS_OPTIONS.map((campus) => (
           <option key={campus.id} value={campus.nombre}>
@@ -568,7 +641,12 @@ function SelectField({ fieldName, register, campusId, getValues }) {
   }
 
   return (
-    <select id={fieldName} {...register(fieldName, getFieldRules(fieldName, getValues))}>
+    <select
+      id={fieldName}
+      className={inputClassName}
+      aria-invalid={ariaInvalid}
+      {...register(fieldName, getFieldRules(fieldName, getValues))}
+    >
       {BLOOD_TYPES.map((blood) => (
         <option key={blood} value={blood}>
           {blood}
@@ -621,6 +699,7 @@ export default function FormularioAspirante({
   const [currentStep, setCurrentStep] = useState(0)
   const stepCount = SECTION_CONFIG.length
   const isLastStep = currentStep === stepCount - 1
+  const progressPercent = stepCount > 1 ? Math.round((currentStep / (stepCount - 1)) * 100) : 100
 
   const campusId = useWatch({ control, name: 'campusId' })
   const selectedCareer = useWatch({ control, name: 'carreraId' })
@@ -707,16 +786,25 @@ export default function FormularioAspirante({
 
       {/* Stepper */}
       <div className="asp-form__stepper" role="tablist" aria-label="Progreso del formulario">
+        <div className="asp-form__progress" aria-hidden="true">
+          <span className="asp-form__progress-track" />
+          <span className="asp-form__progress-value" style={{ width: `${progressPercent}%` }} />
+          <span className="asp-form__progress-text">Progreso: {progressPercent}%</span>
+        </div>
         {SECTION_CONFIG.map((s, idx) => (
           <button
             key={s.id}
             type="button"
-            className={`asp-form__stepper-item ${idx === currentStep ? 'is-active' : ''}`}
+            className={`asp-form__stepper-item ${idx === currentStep ? 'is-active' : ''} ${idx < currentStep ? 'is-complete' : ''}`}
             onClick={() => setCurrentStep(idx)}
-            aria-current={idx === currentStep}
+            aria-current={idx === currentStep ? 'step' : undefined}
           >
             <span className="step-index">{String(idx + 1).padStart(2, '0')}</span>
-            <span className="step-title">{s.title}</span>
+            <span className="step-icon" aria-hidden="true">{STEP_VISUALS[s.id]?.icon}</span>
+            <span className="step-meta">
+              <span className="step-title">{s.title}</span>
+              <span className="step-state">{idx < currentStep ? 'Completado' : idx === currentStep ? 'En curso' : 'Pendiente'}</span>
+            </span>
           </button>
         ))}
       </div>
@@ -730,15 +818,23 @@ export default function FormularioAspirante({
             aria-hidden={idx === currentStep ? 'false' : 'true'}
           >
             <legend>{section.title}</legend>
+            <p className="asp-form__section-help">
+              Paso {String(idx + 1).padStart(2, '0')} de {String(stepCount).padStart(2, '0')} - {section.description}
+            </p>
 
             <div className="asp-form__grid">
               {section.fields.map((fieldName) => {
                 const field = FIELD_META[fieldName]
                 const error = errors[fieldName]?.message
+                const currentValue = getValues(fieldName)
+                const hasValue =
+                  field.type === 'checkbox'
+                    ? Boolean(currentValue)
+                    : String(currentValue ?? '').trim().length > 0
 
                 if (field.type === 'checkbox') {
                   return (
-                    <label key={fieldName} className="asp-form__checkbox">
+                    <label key={fieldName} className={`asp-form__checkbox ${error ? 'is-error' : ''} ${hasValue ? 'is-checked' : ''}`}>
                       <input type="checkbox" {...register(fieldName, getFieldRules(fieldName, getValues))} />
                       <span>{field.label}</span>
                       {error && <small>{error}</small>}
@@ -747,7 +843,7 @@ export default function FormularioAspirante({
                 }
 
                 return (
-                  <div key={fieldName} className="asp-form__field">
+                  <div key={fieldName} className={`asp-form__field ${error ? 'is-error' : ''} ${!error && hasValue ? 'is-valid' : ''}`}>
                     <label htmlFor={fieldName}>
                       {field.label}
                       {field.required && <span> *</span>}
@@ -760,12 +856,16 @@ export default function FormularioAspirante({
                         register={register}
                         campusId={campusId}
                         getValues={getValues}
+                        inputClassName={`${error ? 'is-error' : ''} ${!error && hasValue ? 'is-valid' : ''}`.trim()}
+                        ariaInvalid={Boolean(error)}
                       />
                     ) : (
                       <input
                         id={fieldName}
                         type={field.type || 'text'}
                         step={field.step}
+                        className={`${error ? 'is-error' : ''} ${!error && hasValue ? 'is-valid' : ''}`.trim()}
+                        aria-invalid={Boolean(error)}
                         {...register(fieldName, getFieldRules(fieldName, getValues))}
                         onInput={(event) => sanitizeInputValue(event, field, fieldName)}
                       />
