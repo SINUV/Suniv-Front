@@ -26,6 +26,9 @@ export const CURP_REGEX = /^[A-Z]{4}\d{6}[HM][A-Z]{5}[A-Z0-9]\d$/
 export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 export const PHONE_REGEX = /^\d{10}$/
 export const POSTAL_CODE_REGEX = /^\d{5}$/
+export const ONLY_LETTERS_REGEX = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s'-]*$/
+export const ONLY_NUMBERS_REGEX = /^\d+$/
+export const YEAR_REGEX = /^\d{4}$/
 
 export const FORM_DEFAULT_VALUES = {
   campusId: '',

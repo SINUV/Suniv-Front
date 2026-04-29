@@ -10,6 +10,9 @@ import {
   PHONE_REGEX,
   POSTAL_CODE_REGEX,
   PROGRAM_OPTIONS,
+  ONLY_LETTERS_REGEX,
+  ONLY_NUMBERS_REGEX,
+  YEAR_REGEX,
   mergeWithDefaults,
   normalizeAspirantePayload,
 } from '../formModel'
@@ -190,30 +193,157 @@ function getFechaNacimientoFromCurp(curpValue) {
 function getFieldRules(fieldName, getValues) {
   const currentYear = new Date().getFullYear()
 
-  switch (fieldName) {
-    case 'nombre':
-    case 'apellidoPaterno':
-    case 'apellidoMaterno':
+  // CAMPOS QUE NO PERMITEN NÚMEROS (solo texto)
+  const textOnlyFields = [
+    'nombre',
+    'apellidoPaterno',
+    'apellidoMaterno',
+    'estadoCivil',
+    'nombreEscuela',
+    'areaConocimiento',
+    'calle',
+    'colonia',
+    'municipio',
+    'estado',
+    'medioEnterado',
+    'grupoEtnico',
+    'lenguaIndigena',
+    'nombreResponsable',
+    'parentesco',
+    'ocupacionResponsable',
+    'calleResponsable',
+    'coloniaResponsable',
+    'municipioResponsable',
+    'estadoResponsable',
+    'descendencia',
+    'enfermedades',
+    'alergias',
+    'medicamentosEspeciales',
+    'servicioMedico',
+  ]
+
+  // CAMPOS QUE SOLO PERMITEN NÚMEROS
+  const numberOnlyFields = [
+    'telefono',
+    'telefonoResponsable',
+    'codigoPostal',
+    'codigoPostalResponsable',
+    'anioIngreso',
+    'anioEgreso',
+  ]
+
+  // Validación para campos de texto solamente
+  if (textOnlyFields.includes(fieldName)) {
+    if (fieldName === 'nombre' || fieldName === 'apellidoPaterno' || fieldName === 'apellidoMaterno') {
       return {
         required: 'Este campo es obligatorio.',
-        validate: (value) => !/\d/.test(String(value || '')) || 'Este campo no admite numeros.',
+        validate: (value) => {
+          if (!value) return true
+          if (/\d/.test(String(value || ''))) return 'No se permiten números en este campo.'
+          return true
+        },
       }
+    }
+    // Otros campos de texto
+    return {
+      required: FIELD_META[fieldName]?.required ? 'Este campo es obligatorio.' : undefined,
+      validate: (value) => {
+        if (!value) return true
+        if (/\d/.test(String(value || ''))) return 'No se permiten números en este campo.'
+        return true
+      },
+    }
+  }
+
+  // Validación para campos numéricos solamente
+  if (numberOnlyFields.includes(fieldName)) {
+    if (fieldName === 'telefono' || fieldName === 'telefonoResponsable') {
+      return {
+        required: 'El teléfono es obligatorio.',
+        pattern: {
+          value: PHONE_REGEX,
+          message: 'Teléfono inválido. Debe tener exactamente 10 dígitos.',
+        },
+        validate: (value) => {
+          if (!value) return true
+          if (!/^\d{10}$/.test(value)) return 'Solo números permitidos (10 dígitos).'
+          return true
+        },
+      }
+    }
+    if (fieldName === 'codigoPostal' || fieldName === 'codigoPostalResponsable') {
+      return {
+        required: 'El código postal es obligatorio.',
+        pattern: {
+          value: POSTAL_CODE_REGEX,
+          message: 'Código postal inválido. Debe tener exactamente 5 dígitos.',
+        },
+        validate: (value) => {
+          if (!value) return true
+          if (!/^\d{5}$/.test(value)) return 'Solo números permitidos (5 dígitos).'
+          return true
+        },
+      }
+    }
+    if (fieldName === 'anioIngreso') {
+      return {
+        required: 'Este campo es obligatorio.',
+        min: { value: 1900, message: 'Ingresa un año válido (desde 1900).' },
+        max: { value: currentYear, message: `El año no puede ser mayor a ${currentYear}.` },
+        validate: (value) => {
+          const ingreso = Number(value)
+          const egresoRaw = getValues?.('anioEgreso')
+          const egreso = Number(egresoRaw)
+
+          if (!value) return true
+          if (!/^\d{4}$/.test(String(value))) return 'Debe ser un año de 4 dígitos.'
+          if (egresoRaw && !Number.isNaN(egreso) && ingreso > egreso) {
+            return 'El año de ingreso no puede ser mayor al año de egreso.'
+          }
+
+          return true
+        },
+      }
+    }
+    if (fieldName === 'anioEgreso') {
+      return {
+        required: 'Este campo es obligatorio.',
+        min: { value: 1900, message: 'Ingresa un año válido (desde 1900).' },
+        max: { value: currentYear, message: `El año no puede ser mayor a ${currentYear}.` },
+        validate: (value) => {
+          const egreso = Number(value)
+          const ingresoRaw = getValues?.('anioIngreso')
+          const ingreso = Number(ingresoRaw)
+
+          if (!value) return true
+          if (!/^\d{4}$/.test(String(value))) return 'Debe ser un año de 4 dígitos.'
+          if (ingresoRaw && !Number.isNaN(ingreso) && egreso < ingreso) {
+            return 'El año de egreso no puede ser menor al año de ingreso.'
+          }
+
+          return true
+        },
+      }
+    }
+  }
+
+  switch (fieldName) {
     case 'campusId':
       return {
         required: 'Selecciona un campus.',
-        validate: (value) => GUID_REGEX.test(value) || 'Campus invalido.',
+        validate: (value) => GUID_REGEX.test(value) || 'Campus inválido.',
       }
     case 'carreraId':
       return {
         required: 'Selecciona una carrera.',
-        validate: (value) => GUID_REGEX.test(value) || 'Carrera invalida.',
+        validate: (value) => GUID_REGEX.test(value) || 'Carrera inválida.',
       }
     case 'fechaNacimiento':
       return {
         required: 'La fecha de nacimiento es obligatoria.',
         validate: (value) => {
           const parsedDate = new Date(value)
-          if (Number.isNaN(parsedDate.getTime())) return 'Fecha de nacimiento invalida.'
+          if (Number.isNaN(parsedDate.getTime())) return 'Fecha de nacimiento inválida.'
 
           const now = new Date()
           if (parsedDate > now) return 'La fecha de nacimiento no puede ser futura.'
@@ -225,7 +355,7 @@ function getFieldRules(fieldName, getValues) {
 
           if (!hasHadBirthdayThisYear) age -= 1
 
-          if (age < 14) return 'La edad minima permitida es 14 anios.'
+          if (age < 14) return 'La edad mínima permitida es 14 años.'
           if (age > 80) return 'Verifica la edad: parece fuera del rango esperado.'
 
           const curpValue = getValues?.('curp')
@@ -239,7 +369,7 @@ function getFieldRules(fieldName, getValues) {
       }
     case 'sexo':
       return {
-        required: 'Selecciona una opcion de sexo.',
+        required: 'Selecciona una opción de sexo.',
       }
     case 'curp':
       return {
@@ -248,7 +378,7 @@ function getFieldRules(fieldName, getValues) {
           const normalizedCurp = String(value || '').toUpperCase().trim()
 
           if (!CURP_REGEX.test(normalizedCurp)) {
-            return 'CURP invalida.'
+            return 'CURP inválida. Verifica el formato.'
           }
 
           const fechaNacimiento = getValues?.('fechaNacimiento')
@@ -263,58 +393,18 @@ function getFieldRules(fieldName, getValues) {
     case 'correo':
       return {
         required: 'El correo es obligatorio.',
-        pattern: { value: EMAIL_REGEX, message: 'Correo invalido.' },
-      }
-    case 'telefono':
-    case 'telefonoResponsable':
-      return {
-        required: 'El telefono es obligatorio.',
-        pattern: { value: PHONE_REGEX, message: 'Telefono invalido. Debe tener 10 digitos.' },
-      }
-    case 'codigoPostal':
-    case 'codigoPostalResponsable':
-      return {
-        required: 'El codigo postal es obligatorio.',
-        pattern: { value: POSTAL_CODE_REGEX, message: 'Codigo postal invalido. Debe tener 5 digitos.' },
+        pattern: { value: EMAIL_REGEX, message: 'Correo inválido.' },
       }
     case 'promedioFinal':
       return {
         required: 'El promedio es obligatorio.',
-        min: { value: 0, message: 'El promedio minimo es 0.' },
-        max: { value: 10, message: 'El promedio maximo es 10.' },
-        validate: (value) => !Number.isNaN(Number(value)) || 'Promedio invalido.',
-      }
-    case 'anioIngreso':
-      return {
-        required: 'Este campo es obligatorio.',
-        min: { value: 1900, message: 'Ingresa un anio valido.' },
-        max: { value: currentYear, message: `El anio no puede ser mayor a ${currentYear}.` },
+        min: { value: 0, message: 'El promedio mínimo es 0.' },
+        max: { value: 10, message: 'El promedio máximo es 10.' },
         validate: (value) => {
-          const ingreso = Number(value)
-          const egresoRaw = getValues?.('anioEgreso')
-          const egreso = Number(egresoRaw)
-
-          if (egresoRaw && !Number.isNaN(egreso) && ingreso > egreso) {
-            return 'El anio de ingreso no puede ser mayor al anio de egreso.'
-          }
-
-          return true
-        },
-      }
-    case 'anioEgreso':
-      return {
-        required: 'Este campo es obligatorio.',
-        min: { value: 1900, message: 'Ingresa un anio valido.' },
-        max: { value: currentYear, message: `El anio no puede ser mayor a ${currentYear}.` },
-        validate: (value) => {
-          const egreso = Number(value)
-          const ingresoRaw = getValues?.('anioIngreso')
-          const ingreso = Number(ingresoRaw)
-
-          if (ingresoRaw && !Number.isNaN(ingreso) && egreso < ingreso) {
-            return 'El anio de egreso no puede ser menor al anio de ingreso.'
-          }
-
+          const num = Number(value)
+          if (!value) return true
+          if (Number.isNaN(num)) return 'Promedio inválido. Debe ser un número.'
+          if (num < 0 || num > 10) return 'El promedio debe estar entre 0 y 10.'
           return true
         },
       }
@@ -331,17 +421,82 @@ function getFieldRules(fieldName, getValues) {
   }
 }
 
-function sanitizeInputValue(event, field) {
-  if (field.disallowDigits) {
+function sanitizeInputValue(event, field, fieldName) {
+  // CAMPOS QUE NO PERMITEN NÚMEROS (solo texto)
+  const textOnlyFields = [
+    'nombre',
+    'apellidoPaterno',
+    'apellidoMaterno',
+    'estadoCivil',
+    'nombreEscuela',
+    'areaConocimiento',
+    'calle',
+    'colonia',
+    'municipio',
+    'estado',
+    'medioEnterado',
+    'grupoEtnico',
+    'lenguaIndigena',
+    'nombreResponsable',
+    'parentesco',
+    'ocupacionResponsable',
+    'calleResponsable',
+    'coloniaResponsable',
+    'municipioResponsable',
+    'estadoResponsable',
+    'descendencia',
+    'enfermedades',
+    'alergias',
+    'medicamentosEspeciales',
+    'servicioMedico',
+  ]
+
+  // CAMPOS QUE SOLO PERMITEN NÚMEROS
+  const numberOnlyFields = [
+    'telefono',
+    'telefonoResponsable',
+    'codigoPostal',
+    'codigoPostalResponsable',
+    'numExt',
+  ]
+
+  // Remover números en campos de texto
+  if (textOnlyFields.includes(fieldName)) {
     event.target.value = event.target.value.replace(/\d/g, '')
   }
 
-  if (field.onlyDigits) {
-    event.target.value = event.target.value.replace(/\D/g, '').slice(0, field.onlyDigits)
+  // Remover caracteres no numéricos en campos de números
+  if (numberOnlyFields.includes(fieldName)) {
+    event.target.value = event.target.value.replace(/\D/g, '')
+    
+    // Aplicar límites de dígitos
+    if (fieldName === 'telefono' || fieldName === 'telefonoResponsable') {
+      event.target.value = event.target.value.slice(0, 10)
+    }
+    if (fieldName === 'codigoPostal' || fieldName === 'codigoPostalResponsable') {
+      event.target.value = event.target.value.slice(0, 5)
+    }
   }
 
-  if (field.transformUppercase) {
+  // Transformar CURP a mayúsculas
+  if (fieldName === 'curp') {
     event.target.value = event.target.value.toUpperCase().replace(/\s+/g, '')
+  }
+
+  // Años: solo números, máximo 4 dígitos
+  if (fieldName === 'anioIngreso' || fieldName === 'anioEgreso') {
+    event.target.value = event.target.value.replace(/\D/g, '').slice(0, 4)
+  }
+
+  // Promedio: permite números y un punto decimal
+  if (fieldName === 'promedioFinal') {
+    const current = event.target.value
+    if (current.includes('.')) {
+      const parts = current.split('.')
+      event.target.value = parts[0].replace(/\D/g, '') + '.' + parts[1].replace(/\D/g, '').slice(0, 1)
+    } else {
+      event.target.value = current.replace(/[^\d.]/g, '')
+    }
   }
 }
 
@@ -612,7 +767,7 @@ export default function FormularioAspirante({
                         type={field.type || 'text'}
                         step={field.step}
                         {...register(fieldName, getFieldRules(fieldName, getValues))}
-                        onInput={(event) => sanitizeInputValue(event, field)}
+                        onInput={(event) => sanitizeInputValue(event, field, fieldName)}
                       />
                     )}
 
