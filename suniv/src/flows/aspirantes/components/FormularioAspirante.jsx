@@ -115,7 +115,7 @@ const FIELD_META = {
   apellidoMaterno: { label: 'Apellido materno', required: true, disallowDigits: true },
   fechaNacimiento: { label: 'Fecha de nacimiento', type: 'date', required: true },
   sexo: { label: 'Sexo', type: 'select', required: true },
-  estadoCivil: { label: 'Estado civil', required: true },
+  estadoCivil: { label: 'Estado civil', required: true, disallowDigits: true },
   curp: { label: 'CURP', required: true, transformUppercase: true },
   telefono: { label: 'Telefono', required: true, onlyDigits: 10 },
   correo: { label: 'Correo', type: 'email', required: true },
@@ -126,8 +126,8 @@ const FIELD_META = {
   municipio: { label: 'Municipio', required: true },
   estado: { label: 'Estado', required: true },
   codigoPostal: { label: 'Codigo postal', required: true, onlyDigits: 5 },
-  nombreEscuela: { label: 'Nombre de escuela', required: true },
-  tipoEscuela: { label: 'Tipo de escuela', required: true },
+  nombreEscuela: { label: 'Nombre escuela de procedencia', required: true },
+  tipoEscuela: { label: 'Tipo de escuela', type: 'select', required: true },
   areaConocimiento: { label: 'Area de conocimiento', required: true },
   anioIngreso: { label: 'Anio ingreso', type: 'number', required: true },
   anioEgreso: { label: 'Anio egreso', type: 'number', required: true },
@@ -144,15 +144,15 @@ const FIELD_META = {
   esAfrodesc: { label: 'Se identifica como afrodescendiente', type: 'checkbox' },
   esIndigena: { label: 'Se identifica como persona indigena', type: 'checkbox' },
   descendencia: { label: 'Descendencia' },
-  nombreResponsable: { label: 'Nombre responsable', required: true },
+  nombreResponsable: { label: 'Nombre del responsable', required: true },
   parentesco: { label: 'Parentesco', required: true },
-  ocupacionResponsable: { label: 'Ocupacion responsable' },
-  telefonoResponsable: { label: 'Telefono responsable', required: true, onlyDigits: 10 },
-  calleResponsable: { label: 'Calle responsable', required: true },
-  coloniaResponsable: { label: 'Colonia responsable', required: true },
-  municipioResponsable: { label: 'Municipio responsable', required: true },
-  estadoResponsable: { label: 'Estado responsable', required: true },
-  codigoPostalResponsable: { label: 'Codigo postal responsable', required: true, onlyDigits: 5 },
+  ocupacionResponsable: { label: 'Ocupacion del responsable' },
+  telefonoResponsable: { label: 'Telefono del responsable', required: true, onlyDigits: 10 },
+  calleResponsable: { label: 'Calle del responsable', required: true },
+  coloniaResponsable: { label: 'Colonia del responsable', required: true },
+  municipioResponsable: { label: 'Municipio del responsable', required: true },
+  estadoResponsable: { label: 'Estado del responsable', required: true },
+  codigoPostalResponsable: { label: 'Codigo postal del responsable', required: true, onlyDigits: 5 },
   lugarAplicacion: {
     label: 'Campus donde deseas presentar evaluacion',
     type: 'select',
@@ -385,6 +385,16 @@ function SelectField({ fieldName, register, campusId, getValues }) {
         <option value="M">Masculino</option>
         <option value="F">Femenino</option>
         <option value="O">Prefiero no especificar</option>
+      </select>
+    )
+  }
+
+  if (fieldName === 'tipoEscuela') {
+    return (
+      <select id={fieldName} {...register(fieldName, getFieldRules(fieldName, getValues))}>
+        <option value="">Selecciona una opcion</option>
+        <option value="Publica">Publica</option>
+        <option value="Privada">Privada</option>
       </select>
     )
   }
