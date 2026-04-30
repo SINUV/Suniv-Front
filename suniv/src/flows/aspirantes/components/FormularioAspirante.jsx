@@ -499,6 +499,9 @@ function getFieldRules(fieldName, getValues) {
     case 'sexo':
       return {
         required: 'Selecciona una opción de sexo.',
+        validate: (value) =>
+          ['M', 'F', 'Masculino', 'Femenino'].includes(String(value || '').trim()) ||
+          'Selecciona una opción válida de sexo.',
       }
     case 'curp':
       return {
@@ -528,12 +531,12 @@ function getFieldRules(fieldName, getValues) {
       return {
         required: 'El promedio es obligatorio.',
         min: { value: 0, message: 'El promedio mínimo es 0.' },
-        max: { value: 10, message: 'El promedio máximo es 10.' },
+        max: { value: 100, message: 'El promedio máximo es 100.' },
         validate: (value) => {
           const num = Number(value)
           if (!value) return true
           if (Number.isNaN(num)) return 'Promedio inválido. Debe ser un número.'
-          if (num < 0 || num > 10) return 'El promedio debe estar entre 0 y 10.'
+          if (num < 0 || num > 100) return 'El promedio debe estar entre 0 y 100.'
           return true
         },
       }
@@ -701,7 +704,6 @@ function SelectField({ fieldName, register, campusId, getValues, inputClassName,
         <option value="">Selecciona una opcion</option>
         <option value="M">Masculino</option>
         <option value="F">Femenino</option>
-        <option value="O">Prefiero no especificar</option>
       </select>
     )
   }
@@ -768,7 +770,6 @@ function getButtonGroupOptions(fieldName, campusId) {
     return [
       { value: 'M', label: 'Masculino' },
       { value: 'F', label: 'Femenino' },
-      { value: 'O', label: 'Prefiero no especificar' },
     ]
   }
   if (fieldName === 'tipoEscuela') {

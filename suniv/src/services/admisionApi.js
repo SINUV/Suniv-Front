@@ -71,6 +71,17 @@ function sanitizeErrorMessage(msg) {
 function mapBackendErrorToUserMessage(error) {
   const msg = error?.message || error?.mensaje || String(error)
   const status = error?.status
+  const validationErrors = error?.errors || error?.data?.errors
+
+  if (validationErrors && typeof validationErrors === 'object') {
+    const firstField = Object.keys(validationErrors)[0]
+    const firstMessages = firstField ? validationErrors[firstField] : null
+    const firstMessage = Array.isArray(firstMessages) ? firstMessages[0] : firstMessages
+
+    if (firstMessage) {
+      return sanitizeErrorMessage(String(firstMessage))
+    }
+  }
 
   // Mapear errores comunes del backend
   if (msg.includes('CURP') || msg.includes('curp')) {
@@ -234,8 +245,19 @@ export async function apiPost(path, payload) {
   })
 
   if (!result.ok) {
-    const rawMsg = result.data?.message || result.data?.mensaje || `Error HTTP ${result.status}`
-    const error = new Error(mapBackendErrorToUserMessage({ message: rawMsg, status: result.status }))
+    const rawMsg =
+      result.data?.message ||
+      result.data?.mensaje ||
+      result.data?.title ||
+      `Error HTTP ${result.status}`
+    const error = new Error(
+      mapBackendErrorToUserMessage({
+        message: rawMsg,
+        status: result.status,
+        data: result.data,
+        errors: result.data?.errors,
+      }),
+    )
     error.type = 'HTTP_ERROR'
     error.status = result.status
     error.data = result.data
