@@ -8,11 +8,40 @@ const DEFAULT_BASE_URL = 'http://localhost:5249'
 const API_BASE_URL = (
   import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || DEFAULT_BASE_URL
 ).replace(/\/$/, '')
+const USE_REAL_API_IN_DEV = String(import.meta.env.VITE_USE_REAL_API || '').toLowerCase() === 'true'
 
 function sleep(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms)
   })
+}
+
+function createGuidFallback() {
+  try {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      return crypto.randomUUID()
+    }
+  } catch {
+    // no-op
+  }
+
+  return '00000000-0000-4000-8000-000000000001'
+}
+
+function createMockSubmitResponse(prefix = 'TMP') {
+  const now = new Date()
+  const stamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`
+  const rand = Math.floor(Math.random() * 9000) + 1000
+  const folio = `${prefix}-${stamp}-${rand}`
+
+  return {
+    success: true,
+    data: {
+      folio,
+      aspiranteId: createGuidFallback(),
+    },
+    __mock: true,
+  }
 }
 
 function sanitizeErrorMessage(msg) {
@@ -221,7 +250,25 @@ export async function smokeTestInscripcionStatus(folio = 'TEST-000001') {
 }
 
 export async function submitAdmisionFormulario(payload) {
-  const data = await apiPost('/api/Admision/formulario', payload)
+  if (import.meta.env.DEV && !USE_REAL_API_IN_DEV) {
+    return {
+      ok: true,
+      status: 200,
+      data: createMockSubmitResponse('TMP-ADM'),
+    }
+  }
+
+  let data
+  try {
+    data = await apiPost('/api/Admision/formulario', payload)
+  } catch (error) {
+    if (import.meta.env.DEV && error?.type === 'NETWORK_UNREACHABLE') {
+      console.warn('[MockSubmitAdmision] Backend no disponible, usando respuesta local temporal.')
+      data = createMockSubmitResponse('TMP-ADM')
+    } else {
+      throw error
+    }
+  }
 
   return {
     ok: Boolean(data?.success ?? data?.succes ?? true),
@@ -258,13 +305,91 @@ export async function consultarStatusInscripcion(folio) {
 }
 
 export async function submitInscripcionFormulario(payload) {
-  const data = await apiPost('/api/Inscripciones/formulario', payload)
+  if (import.meta.env.DEV && !USE_REAL_API_IN_DEV) {
+    return {
+      ok: true,
+      status: 200,
+      data: createMockSubmitResponse('TMP-INS'),
+    }
+  }
+
+  let data
+  try {
+    data = await apiPost('/api/Inscripciones/formulario', payload)
+  } catch (error) {
+    if (import.meta.env.DEV && error?.type === 'NETWORK_UNREACHABLE') {
+      console.warn('[MockSubmitInscripcion] Backend no disponible, usando respuesta local temporal.')
+      data = createMockSubmitResponse('TMP-INS')
+    } else {
+      throw error
+    }
+  }
 
   return {
     ok: Boolean(data?.success ?? data?.succes ?? true),
     status: 200,
     data,
   }
+}
+
+export async function getAllowedDocumentExtensions(documentoId) {
+  const safeId = String(documentoId || '').trim()
+  if (!safeId) {
+    throw new Error('No se encontro el identificador del documento.')
+  }
+
+  const result = await apiGet(`/api/admision/documentos/extensiones/${encodeURIComponent(safeId)}`)
+
+  if (!result.ok) {
+    const rawMsg = result.data?.message || result.data?.mensaje || `Error HTTP ${result.status}`
+    throw new Error(sanitizeErrorMessage(rawMsg))
+  }
+
+  const extensions = result.data?.extensions
+  if (!Array.isArray(extensions)) return []
+
+  return extensions
+    .map((ext) => String(ext || '').trim().toLowerCase())
+    .filter(Boolean)
+}
+
+export async function uploadAdmisionDocumento({ aspiranteId, documentoId, file }) {
+  const safeAspiranteId = String(aspiranteId || '').trim()
+  const safeDocumentoId = String(documentoId || '').trim()
+
+  if (!safeAspiranteId || !safeDocumentoId) {
+    throw new Error('No se encontraron los IDs para subir el documento.')
+  }
+
+  if (!(file instanceof File)) {
+    throw new Error('Selecciona un archivo valido para continuar.')
+  }
+
+  const formData = new FormData()
+  formData.append('archivo', file)
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/admision/subir-documento?aspiranteId=${encodeURIComponent(safeAspiranteId)}&documentoId=${encodeURIComponent(safeDocumentoId)}`,
+    {
+      method: 'POST',
+      body: formData,
+    },
+  )
+
+  const rawText = await response.text()
+  let data = null
+  try {
+    data = rawText ? JSON.parse(rawText) : null
+  } catch {
+    data = { message: rawText }
+  }
+
+  if (!response.ok || data?.success === false) {
+    const rawMsg = data?.message || data?.mensaje || `Error HTTP ${response.status}`
+    throw new Error(sanitizeErrorMessage(rawMsg))
+  }
+
+  return data?.url || ''
 }
 
 const MOCK_INSCRIPCION_BY_FOLIO = {

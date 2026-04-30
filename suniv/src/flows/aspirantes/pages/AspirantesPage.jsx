@@ -9,6 +9,23 @@ import {
 } from '../../../services/admisionApi'
 import './AspirantesPage.css'
 
+const GUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
+function extractAspiranteId(source) {
+  const candidates = [
+    source?.id,
+    source?.aspiranteId,
+    source?.aspirante_id,
+    source?.data?.id,
+    source?.data?.aspiranteId,
+    source?.data?.aspirante_id,
+    source?.data?.aspirante?.id,
+    source?.aspirante?.id,
+  ]
+
+  return candidates.find((candidate) => GUID_REGEX.test(String(candidate || '').trim())) || ''
+}
+
 function generarFolioPDF(folio, statusData) {
   const doc = new jsPDF({ unit: 'mm', format: 'a4' })
   const asp = statusData?.aspirante || {}
@@ -127,9 +144,14 @@ function getMensajeFromResponse(rawData) {
   return source.mensaje || source.message || ''
 }
 
+function isTemporaryDevFolio(value) {
+  return String(value || '').trim().toUpperCase().startsWith('TMP-')
+}
+
 export default function AspirantesPage() {
   const [activeMode, setActiveMode] = useState(FORM_MODES.ASPIRANTE)
   const [folio, setFolio] = useState('')
+  const [aspiranteId, setAspiranteId] = useState('')
   const [statusInfo, setStatusInfo] = useState(null)
   const [isConsultingStatus, setIsConsultingStatus] = useState(false)
   const [isLoadingInscripcionData, setIsLoadingInscripcionData] = useState(false)
@@ -187,6 +209,7 @@ export default function AspirantesPage() {
     try {
       const result = await fetchAspiranteByFolioForInscripcion(statusInfo.folio)
       const aspiranteData = result?.data?.aspirante || {}
+      setAspiranteId(extractAspiranteId(aspiranteData) || extractAspiranteId(result?.data))
       setInscripcionInitialData(mergeWithDefaults(aspiranteData))
       setActiveMode(FORM_MODES.INSCRIPCION)
     } catch {
@@ -201,6 +224,17 @@ export default function AspirantesPage() {
     if (!normalizedFolio) return
 
     setFolio(normalizedFolio)
+    setAspiranteId(extractAspiranteId(backend?.data?.data) || extractAspiranteId(backend?.data))
+
+    if (isTemporaryDevFolio(normalizedFolio)) {
+      setStatusInfo({
+        folio: normalizedFolio,
+        estado: mode === FORM_MODES.ASPIRANTE ? 'Pendiente' : '',
+        mensaje: '',
+        rawData: backend?.data?.data || backend?.data || null,
+      })
+      return
+    }
 
     try {
       const result = await consultarStatusInscripcion(normalizedFolio)
@@ -236,26 +270,19 @@ export default function AspirantesPage() {
     <main className="page-main aspirantes-flow">
       <section className="page-hero page-hero--aspirantes">
         <div className="page-hero__copy">
-          <p className="eyebrow">Admision e inscripcion</p>
+          <p className="eyebrow">Ficha de aspirante</p>
           <h1 className="page-hero__title">
-            Flujo completo de <span className="hero-highlight">Aspirante a Estudiante</span>
+            Genera tu <span className="hero-highlight">ficha de admision</span>
           </h1>
           <p className="page-hero__subtitle">
-            Registro, consulta de estado y envio final de inscripcion en un solo flujo.
+            Completa tu registro, obten tu folio y da seguimiento a tu proceso.
           </p>
-          <Link to="/contacto" className="primary-button">
-            Necesito ayuda
-          </Link>
         </div>
       </section>
 
       <section className="content-section aspirantes-flow__grid">
         <article className="aspirantes-panel aspirantes-panel--form aspirantes-panel--form-wide">
-          <h2 className="aspirantes-panel__title">Formulario de admision e inscripcion</h2>
-          <p className="aspirantes-panel__lead">
-            Completa cada seccion con calma. El formulario esta organizado por pasos para
-            facilitar la captura de informacion y reducir la fatiga visual.
-          </p>
+          
 
           <div className="aspirantes-panel__mode-switch">
             <button
@@ -277,6 +304,7 @@ export default function AspirantesPage() {
 
           <FormularioAspirante
             mode={activeMode}
+            aspiranteId={aspiranteId}
             folio={statusInfo?.folio || folio.trim()}
             initialData={
               activeMode === FORM_MODES.INSCRIPCION

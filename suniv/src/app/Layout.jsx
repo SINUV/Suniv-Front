@@ -33,7 +33,7 @@ export default function Layout() {
                 : 'nav-link nav-link--highlight'
             }
           >
-            Aspirantes
+            Obtener Ficha
           </NavLink>
           <NavLink
             to="/programas"
@@ -89,7 +89,7 @@ export default function Layout() {
             to="/aspirantes"
             onClick={closeMenu}
           >
-            Aspirantes
+            Obtener Ficha
           </NavLink>
           <NavLink className="mobile-nav-link" to="/programas" onClick={closeMenu}>
             Programas

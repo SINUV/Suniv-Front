@@ -512,13 +512,29 @@
 .asp-form__alert {
   margin: 0.8rem 0 0;
   border-radius: 12px;
-  padding: 0.95rem 1.1rem;
-  font-weight: 600;
+  padding: 0.9rem 1rem;
+  font-weight: 500;
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 0.75rem;
+  gap: 0.5rem;
   border-left: 4px solid;
   animation: slideDown 220ms ease;
+}
+
+.asp-form__alert-copy {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.asp-form__alert-copy strong {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.asp-form__alert-copy p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.35;
 }
 
 .asp-form__alert--error {
@@ -608,5 +624,201 @@
   .asp-form__section {
     padding: 1rem 0.9rem;
     border-radius: 14px;
+  }
+}
+
+/* ── Button group (selección tipo botón) ── */
+.asp-form__field--btn-group {
+  grid-column: 1 / -1;
+}
+
+.asp-form__btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.asp-form__btn-group--stacked {
+  flex-direction: column;
+  gap: 0.42rem;
+}
+
+.asp-form__btn-opt {
+  flex: 0 0 auto;
+  padding: 0.54rem 1.15rem;
+  border-radius: 10px;
+  border: 1.3px solid #d3dae4;
+  background: #ffffff;
+  color: #374151;
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  line-height: 1.45;
+  text-align: left;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease,
+    color 160ms ease,
+    transform 120ms ease;
+}
+
+.asp-form__btn-opt:hover:not(:disabled) {
+  border-color: rgba(230, 57, 48, 0.45);
+  background: rgba(230, 57, 48, 0.05);
+  color: var(--suniv-primary, #e63930);
+  transform: translateY(-1px);
+}
+
+.asp-form__btn-opt.is-selected {
+  background: linear-gradient(
+    100deg,
+    var(--suniv-primary, #e63930) 0%,
+    var(--suniv-secondary, #f96e41) 100%
+  );
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 4px 14px -6px rgba(230, 57, 48, 0.52);
+}
+
+.asp-form__btn-opt:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.asp-form__btn-group--stacked .asp-form__btn-opt {
+  width: 100%;
+}
+
+.asp-form__field--btn-group.is-error small {
+  color: #b42318;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  line-height: 1.35;
+}
+
+.asp-form__docs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.asp-form__doc-card {
+  border: 1px solid #dbe3ee;
+  border-radius: 14px;
+  padding: 0.9rem;
+  background: #ffffff;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.asp-form__doc-card.is-uploading {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.asp-form__doc-card.is-uploaded {
+  border-color: #16a34a;
+  background: #f0fdf4;
+}
+
+.asp-form__doc-card.is-error {
+  border-color: #dc2626;
+  background: #fef2f2;
+}
+
+.asp-form__doc-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.asp-form__doc-card-head h4 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #1f2937;
+}
+
+.asp-form__doc-chip {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  background: #eef2f7;
+  color: #4b5563;
+}
+
+.asp-form__doc-chip.is-uploaded {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.asp-form__doc-chip.is-uploading {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.asp-form__doc-chip.is-error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.asp-form__doc-accept,
+.asp-form__doc-name,
+.asp-form__doc-message,
+.asp-form__doc-warning,
+.asp-form__doc-note {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.asp-form__doc-accept {
+  color: #4b5563;
+}
+
+.asp-form__doc-warning,
+.asp-form__doc-message {
+  color: #b42318;
+  font-weight: 600;
+}
+
+.asp-form__doc-name {
+  color: #1f2937;
+}
+
+.asp-form__doc-input {
+  min-height: 42px;
+  border: 1px dashed #c6d2e1;
+  border-radius: 10px;
+  padding: 0.55rem 0.6rem;
+  background: #f8fbff;
+}
+
+.asp-form__doc-note {
+  grid-column: 1 / -1;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 12px;
+  padding: 0.7rem 0.85rem;
+  color: #9a3412;
+  font-weight: 600;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.asp-form__doc-note .secondary-button {
+  justify-self: start;
+}
+
+@media (max-width: 860px) {
+  .asp-form__docs-grid {
+    grid-template-columns: 1fr;
   }
 }
