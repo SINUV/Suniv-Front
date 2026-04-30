@@ -609,15 +609,18 @@ function sanitizeInputValue(event, field, fieldName) {
     event.target.value = event.target.value.replace(/\D/g, '').slice(0, 4)
   }
 
-  // Promedio: permite números y un punto decimal
+  // Promedio: solo números y máximo 1 decimal (ej: 8.5)
   if (fieldName === 'promedioFinal') {
-    const current = event.target.value
-    if (current.includes('.')) {
-      const parts = current.split('.')
-      event.target.value = parts[0].replace(/\D/g, '') + '.' + parts[1].replace(/\D/g, '').slice(0, 1)
-    } else {
-      event.target.value = current.replace(/[^\d.]/g, '')
+    // Elimina todo excepto dígitos y punto
+    let value = event.target.value.replace(/[^\d.]/g, '')
+    
+    // Si tiene punto decimal, limita a 1 solo dígito decimal
+    if (value.includes('.')) {
+      const [entero, decimal] = value.split('.')
+      value = entero + '.' + decimal.slice(0, 1)
     }
+    
+    event.target.value = value
   }
 }
 
