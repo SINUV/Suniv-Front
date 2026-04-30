@@ -44,7 +44,7 @@ export const FORM_DEFAULT_VALUES = {
   correo: '',
   calle: '',
   numExt: '',
-  numInt: '',
+  numInt: 'SN',
   colonia: '',
   municipio: '',
   estado: '',
@@ -56,20 +56,20 @@ export const FORM_DEFAULT_VALUES = {
   anioEgreso: '',
   promedioFinal: '',
   medioEnterado: '',
-  lenguaIndigena: '',
-  grupoEtnico: '',
+  lenguaIndigena: 'Ninguna',
+  grupoEtnico: 'Ninguno',
   esAfrodesc: false,
   esIndigena: false,
-  descendencia: '',
+  descendencia: 'Ninguna',
   tipoSangre: 'O+',
-  enfermedades: '',
-  alergias: '',
-  medicamentosEspeciales: '',
-  servicioMedico: '',
-  numeroAfiliacion: '',
+  enfermedades: 'Ninguna',
+  alergias: 'Ninguna',
+  medicamentosEspeciales: 'Ninguno',
+  servicioMedico: 'Ninguno',
+  numeroAfiliacion: 'NA',
   nombreResponsable: '',
   parentesco: '',
-  ocupacionResponsable: '',
+  ocupacionResponsable: 'No especificada',
   telefonoResponsable: '',
   calleResponsable: '',
   coloniaResponsable: '',
@@ -112,22 +112,18 @@ export function mergeWithDefaults(raw) {
   return merged
 }
 
-// Campos opcionales que el backend puede interpretar como enum o tipo específico.
-// Si vienen vacíos, se deben enviar como null (no como "").
-const NULLABLE_OPTIONAL_FIELDS = [
-  'servicioMedico',
-  'tipoEscuela',
-  'numInt',
-  'numeroAfiliacion',
-  'lenguaIndigena',
-  'grupoEtnico',
-  'descendencia',
-  'enfermedades',
-  'alergias',
-  'medicamentosEspeciales',
-  'ocupacionResponsable',
-  'medioEnterado',
-]
+const REQUIRED_FALLBACKS = {
+  numInt: 'SN',
+  alergias: 'Ninguna',
+  grupoEtnico: 'Ninguno',
+  descendencia: 'Ninguna',
+  enfermedades: 'Ninguna',
+  lenguaIndigena: 'Ninguna',
+  servicioMedico: 'Ninguno',
+  numeroAfiliacion: 'NA',
+  ocupacionResponsable: 'No especificada',
+  medicamentosEspeciales: 'Ninguno',
+}
 
 export function normalizeAspirantePayload(values) {
   const trimmed = trimStrings(values)
@@ -147,10 +143,10 @@ export function normalizeAspirantePayload(values) {
     lugarAplicacion,
   }
 
-  // Convertir strings vacíos en campos opcionales a null
-  NULLABLE_OPTIONAL_FIELDS.forEach((field) => {
-    if (payload[field] === '') {
-      payload[field] = null
+  // Backend exige estos campos como obligatorios; nunca enviar null o vacío.
+  Object.entries(REQUIRED_FALLBACKS).forEach(([field, fallback]) => {
+    if (payload[field] === '' || payload[field] === null || payload[field] === undefined) {
+      payload[field] = fallback
     }
   })
 
