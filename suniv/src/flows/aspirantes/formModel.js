@@ -112,6 +112,23 @@ export function mergeWithDefaults(raw) {
   return merged
 }
 
+// Campos opcionales que el backend puede interpretar como enum o tipo específico.
+// Si vienen vacíos, se deben enviar como null (no como "").
+const NULLABLE_OPTIONAL_FIELDS = [
+  'servicioMedico',
+  'tipoEscuela',
+  'numInt',
+  'numeroAfiliacion',
+  'lenguaIndigena',
+  'grupoEtnico',
+  'descendencia',
+  'enfermedades',
+  'alergias',
+  'medicamentosEspeciales',
+  'ocupacionResponsable',
+  'medioEnterado',
+]
+
 export function normalizeAspirantePayload(values) {
   const trimmed = trimStrings(values)
 
@@ -121,7 +138,7 @@ export function normalizeAspirantePayload(values) {
     CAMPUS_OPTIONS.find((c) => c.id === trimmed.campusId)?.nombre ||
     ''
 
-  return {
+  const payload = {
     ...trimmed,
     curp: trimmed.curp.toUpperCase(),
     anioIngreso: Number(trimmed.anioIngreso),
@@ -129,4 +146,13 @@ export function normalizeAspirantePayload(values) {
     promedioFinal: Number(trimmed.promedioFinal),
     lugarAplicacion,
   }
+
+  // Convertir strings vacíos en campos opcionales a null
+  NULLABLE_OPTIONAL_FIELDS.forEach((field) => {
+    if (payload[field] === '') {
+      payload[field] = null
+    }
+  })
+
+  return payload
 }
