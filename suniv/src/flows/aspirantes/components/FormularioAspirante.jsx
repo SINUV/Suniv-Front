@@ -499,13 +499,6 @@ function getFieldRules(fieldName, getValues) {
     case 'promedioFinal':
       return {
         required: 'El promedio es obligatorio.',
-        validate: (value) => {
-          if (!value) return true
-          const num = parseFloat(value)
-          if (isNaN(num)) return 'Debe ser un número.'
-          if (num < 1 || num > 10) return 'Entre 1 y 10.'
-          return true
-        },
       }
     case 'consentimiento':
       return {
