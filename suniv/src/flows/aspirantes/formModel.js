@@ -144,12 +144,15 @@ function normalizeNumericText(value, fallback = '0') {
 
 export function normalizeAspirantePayload(values) {
   const trimmed = trimStrings(values)
+  const selectedCampus = CAMPUS_OPTIONS.find((campus) => campus.id === trimmed.campusId)
+  const selectedCampusName = selectedCampus?.nombre || ''
 
   // Auto-completar lugarAplicacion desde campusId si no viene llenado
+  const lugarAplicacionRaw = trimmed.lugarAplicacion || selectedCampusName || ''
   const lugarAplicacion =
-    trimmed.lugarAplicacion ||
-    CAMPUS_OPTIONS.find((c) => c.id === trimmed.campusId)?.nombre ||
-    ''
+    selectedCampusName && lugarAplicacionRaw.toLowerCase() === selectedCampusName.toLowerCase()
+      ? `Campus ${selectedCampusName}`
+      : lugarAplicacionRaw
 
   const payload = {
     ...trimmed,
