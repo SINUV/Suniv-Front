@@ -1178,11 +1178,14 @@ export default function FormularioAspirante({
       const backendData = result?.data?.data || result?.data || {}
       const responseFolio = backendData.folio || folio
       const responseAspiranteId = extractAspiranteIdFromResponse(backendData) || safeAspiranteId
+      console.log('[SUNIV] AspiranteId extraído de respuesta:', responseAspiranteId, 'BackendData:', backendData)
 
       if (!GUID_REGEX.test(String(responseAspiranteId || '').trim())) {
+        console.error('[SUNIV] AspiranteId inválido o no encontrado:', responseAspiranteId)
         setSubmitError('No se pudo obtener un ID de aspirante valido para subir tus documentos.')
         return
       }
+      console.log('[SUNIV] AspiranteId válido. Iniciando subida de documentos:', responseAspiranteId)
 
       const pendingDocs = DOCUMENTS_CONFIG
         .map((doc) => ({ key: doc.key, file: uploadedDocuments[doc.key]?.file, hasUrl: Boolean(uploadedDocuments[doc.key]?.url) }))

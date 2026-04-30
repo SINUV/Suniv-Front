@@ -319,6 +319,7 @@ export async function submitAdmisionFormulario(payload) {
   let data
   try {
     data = await apiPost('/api/Admision/formulario', payload)
+    console.log('[SUNIV] Respuesta del backend (formulario):', JSON.stringify(data, null, 2))
   } catch (error) {
     if (import.meta.env.DEV && error?.type === 'NETWORK_UNREACHABLE') {
       console.warn('[MockSubmitAdmision] Backend no disponible, usando respuesta local temporal.')
@@ -426,13 +427,13 @@ export async function uploadAdmisionDocumento({ aspiranteId, documentoId, file }
   const formData = new FormData()
   formData.append('archivo', file)
 
-  const response = await fetch(
-    `${API_BASE_URL}/api/admision/subir-documento?aspiranteId=${encodeURIComponent(safeAspiranteId)}&documentoId=${encodeURIComponent(safeDocumentoId)}`,
-    {
-      method: 'POST',
-      body: formData,
-    },
-  )
+  const uploadUrl = `${API_BASE_URL}/api/Admision/subir-documento?aspiranteId=${encodeURIComponent(safeAspiranteId)}&documentoId=${encodeURIComponent(safeDocumentoId)}`
+  console.log('[SUNIV] Subiendo documento a:', uploadUrl)
+
+  const response = await fetch(uploadUrl, {
+    method: 'POST',
+    body: formData,
+  })
 
   const rawText = await response.text()
   let data = null
@@ -441,6 +442,8 @@ export async function uploadAdmisionDocumento({ aspiranteId, documentoId, file }
   } catch {
     data = { message: rawText }
   }
+
+  console.log('[SUNIV] Respuesta de upload:', data)
 
   if (!response.ok || data?.success === false) {
     const rawMsg = data?.message || data?.mensaje || `Error HTTP ${response.status}`
