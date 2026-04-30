@@ -1260,10 +1260,6 @@ export default function FormularioAspirante({
 
                       <p className="asp-form__doc-accept">Acepta: {formatExtensions(rule.allowedExtensions || doc.defaultExtensions)}</p>
 
-                      {!rule.isConfigured && (
-                        <p className="asp-form__doc-warning">Falta configurar el ID de este documento en variables de entorno.</p>
-                      )}
-
                       <input
                         type="file"
                         className="asp-form__doc-input"
