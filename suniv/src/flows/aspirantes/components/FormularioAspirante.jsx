@@ -499,13 +499,11 @@ function getFieldRules(fieldName, getValues) {
     case 'promedioFinal':
       return {
         required: 'El promedio es obligatorio.',
-        min: { value: 1, message: 'El promedio mínimo es 1.' },
-        max: { value: 10, message: 'El promedio máximo es 10.' },
         validate: (value) => {
-          const num = Number(value)
           if (!value) return true
-          if (Number.isNaN(num)) return 'Promedio inválido. Debe ser un número.'
-          if (num < 1 || num > 10) return 'El promedio debe estar entre 1 y 10.'
+          const num = parseFloat(value)
+          if (isNaN(num)) return 'Debe ser un número.'
+          if (num < 1 || num > 10) return 'Entre 1 y 10.'
           return true
         },
       }
@@ -609,15 +607,15 @@ function sanitizeInputValue(event, field, fieldName) {
     event.target.value = event.target.value.replace(/\D/g, '').slice(0, 4)
   }
 
-  // Promedio: solo números y máximo 1 decimal (ej: 8.5)
+  // Promedio: solo números y punto decimal
   if (fieldName === 'promedioFinal') {
-    // Elimina todo excepto dígitos y punto
+    // Permite dígitos y punto
     let value = event.target.value.replace(/[^\d.]/g, '')
     
-    // Si tiene punto decimal, limita a 1 solo dígito decimal
-    if (value.includes('.')) {
-      const [entero, decimal] = value.split('.')
-      value = entero + '.' + decimal.slice(0, 1)
+    // Si hay múltiples puntos, mantén solo el primero
+    const dotIndex = value.indexOf('.')
+    if (dotIndex !== -1) {
+      value = value.substring(0, dotIndex + 1) + value.substring(dotIndex + 1).replace(/\./g, '')
     }
     
     event.target.value = value
