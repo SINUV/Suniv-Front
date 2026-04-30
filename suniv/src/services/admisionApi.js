@@ -112,11 +112,21 @@ function mapBackendErrorToUserMessage(error) {
 function parseResponseBody(contentType, rawText) {
   if (!rawText) return null
 
-  if (contentType.includes('application/json')) {
+  // application/problem+json es el formato de errores de validación de .NET
+  if (contentType.includes('application/json') || contentType.includes('application/problem+json')) {
     try {
       return JSON.parse(rawText)
     } catch {
       return { message: rawText }
+    }
+  }
+
+  // Intentar parsear como JSON igualmente (por si el Content-Type viene mal configurado)
+  if (rawText.trimStart().startsWith('{') || rawText.trimStart().startsWith('[')) {
+    try {
+      return JSON.parse(rawText)
+    } catch {
+      // No era JSON válido, continúa
     }
   }
 

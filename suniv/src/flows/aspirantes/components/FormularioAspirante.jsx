@@ -202,6 +202,7 @@ const STEP_VISUALS = {
 }
 
 const BLOOD_TYPES = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+const ESTADO_CIVIL_OPTIONS = ['Soltero', 'Casado', 'UnionLibre', 'Divorciado', 'Viudo']
 
 const FIELD_META = {
   campusId: { label: 'Campus', type: 'select', required: true, asButtonGroup: true },
@@ -211,7 +212,7 @@ const FIELD_META = {
   apellidoMaterno: { label: 'Apellido materno', required: true, disallowDigits: true },
   fechaNacimiento: { label: 'Fecha de nacimiento', type: 'date', required: true },
   sexo: { label: 'Sexo', type: 'select', required: true, asButtonGroup: true },
-  estadoCivil: { label: 'Estado civil', required: true, disallowDigits: true },
+  estadoCivil: { label: 'Estado civil', type: 'select', required: true },
   curp: { label: 'CURP', required: true, transformUppercase: true },
   telefono: { label: 'Telefono', required: true, onlyDigits: 10 },
   correo: { label: 'Correo', type: 'email', required: true },
@@ -291,7 +292,6 @@ function getFieldRules(fieldName, getValues) {
     'nombre',
     'apellidoPaterno',
     'apellidoMaterno',
-    'estadoCivil',
     'areaConocimiento',
     'calle',
     'colonia',
@@ -503,6 +503,13 @@ function getFieldRules(fieldName, getValues) {
           ['M', 'F', 'Masculino', 'Femenino'].includes(String(value || '').trim()) ||
           'Selecciona una opción válida de sexo.',
       }
+    case 'estadoCivil':
+      return {
+        required: 'Selecciona una opción de estado civil.',
+        validate: (value) =>
+          ESTADO_CIVIL_OPTIONS.includes(String(value || '').trim()) ||
+          'Selecciona una opción válida de estado civil.',
+      }
     case 'curp':
       return {
         required: 'La CURP es obligatoria.',
@@ -559,7 +566,6 @@ function sanitizeInputValue(event, field, fieldName) {
     'nombre',
     'apellidoPaterno',
     'apellidoMaterno',
-    'estadoCivil',
     'areaConocimiento',
     'calle',
     'colonia',
@@ -704,6 +710,24 @@ function SelectField({ fieldName, register, campusId, getValues, inputClassName,
         <option value="">Selecciona una opcion</option>
         <option value="M">Masculino</option>
         <option value="F">Femenino</option>
+      </select>
+    )
+  }
+
+  if (fieldName === 'estadoCivil') {
+    return (
+      <select
+        id={fieldName}
+        className={inputClassName}
+        aria-invalid={ariaInvalid}
+        {...register(fieldName, getFieldRules(fieldName, getValues))}
+      >
+        <option value="">Selecciona una opcion</option>
+        <option value="Soltero">Soltero(a)</option>
+        <option value="Casado">Casado(a)</option>
+        <option value="UnionLibre">Union libre</option>
+        <option value="Divorciado">Divorciado(a)</option>
+        <option value="Viudo">Viudo(a)</option>
       </select>
     )
   }
