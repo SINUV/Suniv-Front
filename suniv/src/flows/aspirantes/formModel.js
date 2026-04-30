@@ -44,7 +44,7 @@ export const FORM_DEFAULT_VALUES = {
   correo: '',
   calle: '',
   numExt: '',
-  numInt: 'SN',
+  numInt: '0',
   colonia: '',
   municipio: '',
   estado: '',
@@ -66,7 +66,7 @@ export const FORM_DEFAULT_VALUES = {
   alergias: 'Ninguna',
   medicamentosEspeciales: 'Ninguno',
   servicioMedico: 'Ninguno',
-  numeroAfiliacion: 'NA',
+  numeroAfiliacion: '0',
   nombreResponsable: '',
   parentesco: '',
   ocupacionResponsable: 'No especificada',
@@ -113,16 +113,33 @@ export function mergeWithDefaults(raw) {
 }
 
 const REQUIRED_FALLBACKS = {
-  numInt: 'SN',
+  numInt: '0',
   alergias: 'Ninguna',
   grupoEtnico: 'Ninguno',
   descendencia: 'Ninguna',
   enfermedades: 'Ninguna',
   lenguaIndigena: 'Ninguna',
   servicioMedico: 'Ninguno',
-  numeroAfiliacion: 'NA',
+  numeroAfiliacion: '0',
   ocupacionResponsable: 'No especificada',
   medicamentosEspeciales: 'Ninguno',
+}
+
+function normalizeFreeText(value, fallback) {
+  const raw = String(value || '').trim()
+  if (!raw) return fallback
+
+  const lowered = raw.toLowerCase()
+  if (['nada', 'na', 'n/a', 'ninguna', 'ninguno', 'no aplica'].includes(lowered)) {
+    return fallback
+  }
+
+  return raw
+}
+
+function normalizeNumericText(value, fallback = '0') {
+  const onlyDigits = String(value || '').replace(/\D/g, '')
+  return onlyDigits || fallback
 }
 
 export function normalizeAspirantePayload(values) {
@@ -149,6 +166,31 @@ export function normalizeAspirantePayload(values) {
       payload[field] = fallback
     }
   })
+
+  // Campos que suelen romper backend si llegan con texto libre tipo "nada".
+  payload.enfermedades = normalizeFreeText(payload.enfermedades, 'Ninguna')
+  payload.alergias = normalizeFreeText(payload.alergias, 'Ninguna')
+  payload.medicamentosEspeciales = normalizeFreeText(payload.medicamentosEspeciales, 'Ninguno')
+
+  // Si no se identifica como indigena/afro, enviar valor neutro consistente.
+  if (!payload.esIndigena) {
+    payload.lenguaIndigena = 'Ninguna'
+    payload.grupoEtnico = 'Ninguno'
+  } else {
+    payload.lenguaIndigena = normalizeFreeText(payload.lenguaIndigena, 'Ninguna')
+    payload.grupoEtnico = normalizeFreeText(payload.grupoEtnico, 'Ninguno')
+  }
+
+  payload.descendencia = payload.esAfrodesc
+    ? normalizeFreeText(payload.descendencia, 'No especificada')
+    : 'Ninguna'
+
+  // Ajustar campos que algunos backends modelan como numéricos.
+  payload.numInt = normalizeNumericText(payload.numInt, '0')
+  payload.numeroAfiliacion =
+    payload.servicioMedico === 'Ninguno'
+      ? '0'
+      : normalizeNumericText(payload.numeroAfiliacion, '0')
 
   return payload
 }
