@@ -602,16 +602,8 @@ function sanitizeInputValue(event, field, fieldName) {
 
   // Promedio: solo números y punto decimal
   if (fieldName === 'promedioFinal') {
-    // Permite dígitos y punto
-    let value = event.target.value.replace(/[^\d.]/g, '')
-    
-    // Si hay múltiples puntos, mantén solo el primero
-    const dotIndex = value.indexOf('.')
-    if (dotIndex !== -1) {
-      value = value.substring(0, dotIndex + 1) + value.substring(dotIndex + 1).replace(/\./g, '')
-    }
-    
-    event.target.value = value
+    // Permite dígitos y punto - sin restricciones de cantidad de decimales
+    event.target.value = event.target.value.replace(/[^\d.]/g, '')
   }
 }
 
