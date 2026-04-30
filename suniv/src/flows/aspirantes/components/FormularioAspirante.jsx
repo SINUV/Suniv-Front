@@ -484,8 +484,14 @@ function getFieldRules(fieldName, getValues) {
         validate: (value) => {
           const normalizedCurp = String(value || '').toUpperCase().trim()
 
-          if (!CURP_REGEX.test(normalizedCurp)) {
-            return 'CURP inválida. Verifica el formato (18 caracteres).'
+          // Validación simple: 18 caracteres, acepta tanto CURPs anteriores como posteriores al 2000
+          if (normalizedCurp.length !== 18) {
+            return 'CURP debe tener exactamente 18 caracteres.'
+          }
+
+          // Patrón: 4 letras + 6 dígitos + 1 H/M + 5 letras + 2 alfanuméricos
+          if (!/^[A-Z]{4}\d{6}[HM][A-Z]{5}[A-Z0-9]{2}$/.test(normalizedCurp)) {
+            return 'Formato de CURP inválido.'
           }
 
           return true
@@ -601,18 +607,10 @@ function sanitizeInputValue(event, field, fieldName) {
   }
 
   // Promedio: solo números y punto decimal
-    if (fieldName === 'promedioFinal') {
-      return {
-        required: 'El promedio es obligatorio.',
-        validate: (value) => {
-          if (!value) return true
-          const num = Number(value)
-          if (Number.isNaN(num)) return 'Promedio inválido. Debe ser un número.'
-          if (num < 0 || num > 100) return 'El promedio debe estar entre 0 y 100.'
-          return true
-        },
-      }
-    }
+  if (fieldName === 'promedioFinal') {
+    // Permite dígitos y punto - sin restricciones de cantidad de decimales
+    event.target.value = event.target.value.replace(/[^\d.]/g, '')
+  }
 }
 
 function SelectField({ fieldName, register, campusId, getValues, inputClassName, ariaInvalid }) {
