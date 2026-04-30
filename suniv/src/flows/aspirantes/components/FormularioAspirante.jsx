@@ -1140,6 +1140,7 @@ export default function FormularioAspirante({
 
     try {
       const payload = normalizeAspirantePayload(values)
+      console.log('[SUNIV] Payload enviado al backend:', JSON.stringify(payload, null, 2))
       const result =
         mode === FORM_MODES.ASPIRANTE
           ? await submitAdmisionFormulario(payload)

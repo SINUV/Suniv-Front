@@ -115,11 +115,18 @@ export function mergeWithDefaults(raw) {
 export function normalizeAspirantePayload(values) {
   const trimmed = trimStrings(values)
 
+  // Auto-completar lugarAplicacion desde campusId si no viene llenado
+  const lugarAplicacion =
+    trimmed.lugarAplicacion ||
+    CAMPUS_OPTIONS.find((c) => c.id === trimmed.campusId)?.nombre ||
+    ''
+
   return {
     ...trimmed,
     curp: trimmed.curp.toUpperCase(),
     anioIngreso: Number(trimmed.anioIngreso),
     anioEgreso: Number(trimmed.anioEgreso),
     promedioFinal: Number(trimmed.promedioFinal),
+    lugarAplicacion,
   }
 }

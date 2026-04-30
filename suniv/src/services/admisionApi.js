@@ -245,6 +245,7 @@ export async function apiPost(path, payload) {
   })
 
   if (!result.ok) {
+    console.error('[SUNIV] Error backend:', result.status, result.data)
     const rawMsg =
       result.data?.message ||
       result.data?.mensaje ||
