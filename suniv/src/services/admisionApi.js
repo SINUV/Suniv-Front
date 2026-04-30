@@ -5,8 +5,13 @@ import {
 } from '../flows/aspirantes/formModel'
 
 const DEFAULT_BASE_URL = 'http://localhost:5249'
+const RAW_API_BASE_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || ''
+const ALLOW_CROSS_ORIGIN_API = String(import.meta.env.VITE_ALLOW_CROSS_ORIGIN_API || '').toLowerCase() === 'true'
+const IS_ABSOLUTE_URL = /^https?:\/\//i.test(RAW_API_BASE_URL)
 const API_BASE_URL = (
-  import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || DEFAULT_BASE_URL
+  import.meta.env.PROD
+    ? (ALLOW_CROSS_ORIGIN_API && IS_ABSOLUTE_URL ? RAW_API_BASE_URL : '')
+    : RAW_API_BASE_URL || DEFAULT_BASE_URL
 ).replace(/\/$/, '')
 const USE_REAL_API_IN_DEV = String(import.meta.env.VITE_USE_REAL_API || '').toLowerCase() === 'true'
 
