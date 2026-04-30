@@ -601,10 +601,18 @@ function sanitizeInputValue(event, field, fieldName) {
   }
 
   // Promedio: solo números y punto decimal
-  if (fieldName === 'promedioFinal') {
-    // Permite dígitos y punto - sin restricciones de cantidad de decimales
-    event.target.value = event.target.value.replace(/[^\d.]/g, '')
-  }
+    if (fieldName === 'promedioFinal') {
+      return {
+        required: 'El promedio es obligatorio.',
+        validate: (value) => {
+          if (!value) return true
+          const num = Number(value)
+          if (Number.isNaN(num)) return 'Promedio inválido. Debe ser un número.'
+          if (num < 0 || num > 100) return 'El promedio debe estar entre 0 y 100.'
+          return true
+        },
+      }
+    }
 }
 
 function SelectField({ fieldName, register, campusId, getValues, inputClassName, ariaInvalid }) {
