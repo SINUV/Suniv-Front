@@ -499,13 +499,13 @@ function getFieldRules(fieldName, getValues) {
     case 'promedioFinal':
       return {
         required: 'El promedio es obligatorio.',
-        min: { value: 0, message: 'El promedio mínimo es 0.' },
-        max: { value: 100, message: 'El promedio máximo es 100.' },
+        min: { value: 1, message: 'El promedio mínimo es 1.' },
+        max: { value: 10, message: 'El promedio máximo es 10.' },
         validate: (value) => {
           const num = Number(value)
           if (!value) return true
           if (Number.isNaN(num)) return 'Promedio inválido. Debe ser un número.'
-          if (num < 0 || num > 100) return 'El promedio debe estar entre 0 y 100.'
+          if (num < 1 || num > 10) return 'El promedio debe estar entre 1 y 10.'
           return true
         },
       }
