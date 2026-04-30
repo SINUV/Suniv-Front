@@ -68,18 +68,31 @@ function sanitizeErrorMessage(msg) {
   return clean || 'Ocurrio un error. Por favor intenta de nuevo.'
 }
 
+function normalizeValidationEntries(validationErrors) {
+  if (!validationErrors || typeof validationErrors !== 'object') return []
+
+  return Object.entries(validationErrors)
+    .map(([field, messages]) => {
+      const list = Array.isArray(messages)
+        ? messages.map((msg) => sanitizeErrorMessage(String(msg))).filter(Boolean)
+        : [sanitizeErrorMessage(String(messages))]
+
+      return { field, messages: list }
+    })
+    .filter((entry) => entry.messages.length > 0)
+}
+
 function mapBackendErrorToUserMessage(error) {
   const msg = error?.message || error?.mensaje || String(error)
   const status = error?.status
   const validationErrors = error?.errors || error?.data?.errors
 
   if (validationErrors && typeof validationErrors === 'object') {
-    const firstField = Object.keys(validationErrors)[0]
-    const firstMessages = firstField ? validationErrors[firstField] : null
-    const firstMessage = Array.isArray(firstMessages) ? firstMessages[0] : firstMessages
+    const entries = normalizeValidationEntries(validationErrors)
+    const firstEntry = entries[0]
 
-    if (firstMessage) {
-      return sanitizeErrorMessage(String(firstMessage))
+    if (firstEntry?.messages?.[0]) {
+      return `${firstEntry.field}: ${firstEntry.messages[0]}`
     }
   }
 
@@ -256,6 +269,13 @@ export async function apiPost(path, payload) {
 
   if (!result.ok) {
     console.error('[SUNIV] Error backend:', result.status, result.data)
+    const validationEntries = normalizeValidationEntries(result.data?.errors)
+    if (validationEntries.length > 0) {
+      const summary = validationEntries
+        .map((entry) => `${entry.field}: ${entry.messages.join(' | ')}`)
+        .join('\n')
+      console.error('[SUNIV] Validaciones backend:\n' + summary)
+    }
     const rawMsg =
       result.data?.message ||
       result.data?.mensaje ||
