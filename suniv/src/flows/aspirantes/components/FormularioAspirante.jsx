@@ -258,32 +258,6 @@ const FIELD_META = {
   consentimiento: { label: 'Acepto el tratamiento de datos', type: 'checkbox', required: true },
 }
 
-function getFechaNacimientoFromCurp(curpValue) {
-  const normalizedCurp = String(curpValue || '').toUpperCase().trim()
-  if (!CURP_REGEX.test(normalizedCurp)) return null
-
-  const yy = Number(normalizedCurp.slice(4, 6))
-  const mm = Number(normalizedCurp.slice(6, 8))
-  const dd = Number(normalizedCurp.slice(8, 10))
-
-  const now = new Date()
-  const currentTwoDigits = now.getFullYear() % 100
-  const fullYear = yy <= currentTwoDigits ? 2000 + yy : 1900 + yy
-
-  if (mm < 1 || mm > 12 || dd < 1 || dd > 31) return null
-
-  const parsedDate = new Date(fullYear, mm - 1, dd)
-  if (
-    parsedDate.getFullYear() !== fullYear ||
-    parsedDate.getMonth() !== mm - 1 ||
-    parsedDate.getDate() !== dd
-  ) {
-    return null
-  }
-
-  return `${fullYear}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`
-}
-
 function getFieldRules(fieldName, getValues) {
   const currentYear = new Date().getFullYear()
 
@@ -487,12 +461,6 @@ function getFieldRules(fieldName, getValues) {
           if (age < 14) return 'La edad mínima permitida es 14 años.'
           if (age > 80) return 'Verifica la edad: parece fuera del rango esperado.'
 
-          const curpValue = getValues?.('curp')
-          const curpDate = getFechaNacimientoFromCurp(curpValue)
-          if (curpDate && value !== curpDate) {
-            return 'La fecha de nacimiento no coincide con la CURP.'
-          }
-
           return true
         },
       }
@@ -517,13 +485,7 @@ function getFieldRules(fieldName, getValues) {
           const normalizedCurp = String(value || '').toUpperCase().trim()
 
           if (!CURP_REGEX.test(normalizedCurp)) {
-            return 'CURP inválida. Verifica el formato.'
-          }
-
-          const fechaNacimiento = getValues?.('fechaNacimiento')
-          const curpDate = getFechaNacimientoFromCurp(normalizedCurp)
-          if (fechaNacimiento && curpDate && fechaNacimiento !== curpDate) {
-            return 'La CURP no coincide con la fecha de nacimiento.'
+            return 'CURP inválida. Verifica el formato (18 caracteres).'
           }
 
           return true
